@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#define ITIME 1000  // Integration time (interval between two time tags?)
+
 int main(int argc, char **argv) {
     std::ifstream input_stream;
 
@@ -33,8 +35,8 @@ int main(int argc, char **argv) {
             n_singles++;
         }
         else if ((word >> 29) == -4) { // time tag
-            time_from_start = (word & 0x1fffffff) / 1000;
-            itagu = word - time_from_start * 1000;
+            time_from_start = (word & 0x1fffffff) / ITIME;  // assuming that the tag is every 1ms
+            itagu = word - time_from_start * ITIME;
             n_timetags++;
         }
         n++;
