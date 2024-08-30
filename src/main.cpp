@@ -8,20 +8,45 @@ int main(int argc, char **argv) {
 
     input_stream.open(filename, std::ifstream::in);
 
+    bool is_prompt; //prompt bit
     int tag = 0;
     int time_from_start;  // Time since acquisition start in seconds
     int itagu;
     int word;
-    int n = 0;
+    unsigned long n_prompts = 0;
+    unsigned long n_delayeds = 0;
+    unsigned long n_singles = 0;
+    unsigned long n_timetags = 0;
+    unsigned long n = 0;
 
     while (input_stream.good()) {
         input_stream.read(reinterpret_cast<char *>(&word), sizeof(word));
-        if ((word >> 29) == -4) {
+        if (word > 0) {
+            is_prompt = (word >> 30);
+            if (is_prompt) {
+                n_prompts++;
+            } else { // delayeds
+                n_delayeds++;
+            };
+        }
+        else if ((word >> 30) == -3) { // single
+            n_singles++;
+        }
+        else if ((word >> 29) == -4) { // time tag
             time_from_start = (word & 0x1fffffff) / 1000;
             itagu = word - time_from_start * 1000;
-            std::cout << word << std::endl;
+            n_timetags++;
         }
         n++;
+        if ((n_timetags % 100000) == 0) {
+            std::cout << "-------------------------------------" << std::endl;
+            std::cout << "Time: " << time_from_start << std::endl;
+            std::cout << "Prompts: " << n_prompts << std::endl;
+            std::cout << "Delayeds: " << n_delayeds << std::endl;
+            std::cout << "Singles: " << n_singles << std::endl;
+            std::cout << "Timetags: " << n_timetags << std::endl;
+            std::cout << "Iterations: " << n << std::endl;
+        }
     }
 
     input_stream.close();
