@@ -1,3 +1,4 @@
+#include <memory>
 #include <fstream>
 #include <cassert>
 #include "PETLINKStream.h"
@@ -11,15 +12,15 @@ PETLINKStream::~PETLINKStream() {
     close();
 };
 
-EventOrTag* PETLINKStream::get_next() {
+std::shared_ptr<EventOrTag> PETLINKStream::get_next() {
     read(reinterpret_cast<char *>(&current_word), sizeof(current_word));
-    EventOrTag* result = new EventOrTag;
+    std::shared_ptr<EventOrTag> result = std::make_shared<EventOrTag>();
     if (current_word >> 31) {
         result->is_event = false;
-        result->value.tag = new Tag(current_word);
+        result->value.tag = std::make_shared<Tag>(current_word);
     } else {
         result->is_event = true;
-        result->value.event = new Event(current_word);
+        result->value.event = std::make_shared<Event>(current_word);
     }
     return result;
 };

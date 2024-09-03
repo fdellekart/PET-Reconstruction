@@ -1,3 +1,4 @@
+#include <memory>
 #include <iostream>
 #include <set>
 #include <cstdint>
@@ -18,10 +19,10 @@ int main(int argc, char **argv) {
     unsigned long n = 0;
 
     while (input_stream.good()) {
-        EventOrTag* next = input_stream.get_next();
+        std::shared_ptr<EventOrTag> next = input_stream.get_next();
         
         if (next->is_event) {
-            Event* event = next->value;
+            std::shared_ptr<Event> event = next->value;
             if (event->is_prompt) {
                 n_prompts++;
                 unique_bin_addresses->insert(event->bin_address);
@@ -30,7 +31,7 @@ int main(int argc, char **argv) {
             };
         }
         else {
-            Tag* tag = next->value;
+            std::shared_ptr<Tag> tag = next->value;
             if (tag->is_timetag) {
                 n_timetags++;
                 time_from_start = tag->elapsed_millis / ITIME;
