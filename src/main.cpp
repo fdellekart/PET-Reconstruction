@@ -3,52 +3,59 @@
 #include <unordered_set>
 #include <cstdint>
 #include "PETLINKStream.h"
+#include "DataSummary.h"
 
-#define ITIME 1000  // Integration time (interval between two time tags?)
+#define ITIME 1000 // Integration time (interval between two time tags?)
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     auto filename = "/home/recon/Documents/Thesis-Dellekart/SIRF-STIR-PET-Reconstruction/input/1.3.12.2.1107.5.2.38.51035.30000017121607191856600000009.bf";
     PETLINKStream input_stream(filename);
 
-    int time_from_start;  // Time since acquisition start in seconds
-    std::unordered_set<uint32_t>* unique_bin_addresses = new std::unordered_set<uint32_t>;
-    unsigned long n_prompts = 0;
-    unsigned long n_delayeds = 0;
-    unsigned long n_singles = 0;
-    unsigned long n_timetags = 0;
-    unsigned long n = 0;
+    int time_from_start; // Time since acquisition start in seconds
+    std::unordered_set<uint32_t> *unique_bin_addresses = new std::unordered_set<uint32_t>;
+    DataSummary summary;
 
-    while (input_stream.good()) {
+    while (input_stream.good())
+    {
         std::shared_ptr<EventOrTag> next = input_stream.get_next();
-        
-        if (next->is_event) {
-            if (next->event.is_prompt) {
-                n_prompts++;
+
+        if (next->is_event)
+        {
+            if (next->event.is_prompt)
+            {
+                summary.n_prompts++;
                 unique_bin_addresses->insert(next->event.bin_address);
-            } else { // delayeds
-                n_delayeds++;
+            }
+            else
+            { // delayeds
+                summary.n_delayeds++;
             };
         }
-        else {
-            if (next->tag.is_timetag) {
-                n_timetags++;
+        else
+        {
+            if (next->tag.is_timetag)
+            {
+                summary.n_timetags++;
                 time_from_start = next->tag.elapsed_millis / ITIME;
             }
         }
 
-        n++;
-        if ((n_timetags % 10000) == 0) {
+        summary.tot_entries++;
+        if ((summary.n_timetags % 10000) == 0)
+        {
             std::cout << "-------------------------------------" << std::endl;
             std::cout << "Time: " << time_from_start << std::endl;
-            std::cout << "Prompts: " << n_prompts << std::endl;
-            std::cout << "Delayeds: " << n_delayeds << std::endl;
-            std::cout << "Singles: " << n_singles << std::endl;
-            std::cout << "Timetags: " << n_timetags << std::endl;
-            std::cout << "Iterations: " << n << std::endl;
+            std::cout << "Prompts: " << summary.n_prompts << std::endl;
+            std::cout << "Delayeds: " << summary.n_delayeds << std::endl;
+            std::cout << "Singles: " << summary.n_singles << std::endl;
+            std::cout << "Timetags: " << summary.n_timetags << std::endl;
+            std::cout << "Iterations: " << summary.tot_entries << std::endl;
         }
     }
 
-    for (uint32_t address : *unique_bin_addresses) {
+    for (uint32_t address : *unique_bin_addresses)
+    {
         std::cout << address << std::endl;
     };
 
