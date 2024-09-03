@@ -11,9 +11,9 @@ int main(int argc, char **argv)
 {
     auto filename = "/home/recon/Documents/Thesis-Dellekart/SIRF-STIR-PET-Reconstruction/input/1.3.12.2.1107.5.2.38.51035.30000017121607191856600000009.bf";
     PETLINKStream input_stream(filename);
+    int printed_time = 0;
 
     int time_from_start; // Time since acquisition start in seconds
-    std::unordered_set<uint32_t> *unique_bin_addresses = new std::unordered_set<uint32_t>;
     DataSummary summary;
 
     while (input_stream.good())
@@ -25,7 +25,6 @@ int main(int argc, char **argv)
             if (next->event.is_prompt)
             {
                 summary.n_prompts++;
-                unique_bin_addresses->insert(next->event.bin_address);
             }
             else
             { // delayeds
@@ -42,24 +41,19 @@ int main(int argc, char **argv)
         }
 
         summary.tot_entries++;
-        if ((summary.n_timetags % 10000) == 0)
+
+        if (printed_time != time_from_start && ((time_from_start % 10) == 0))
         {
-            std::cout << "-------------------------------------" << std::endl;
-            std::cout << "Time: " << time_from_start << std::endl;
-            std::cout << "Prompts: " << summary.n_prompts << std::endl;
-            std::cout << "Delayeds: " << summary.n_delayeds << std::endl;
-            std::cout << "Singles: " << summary.n_singles << std::endl;
-            std::cout << "Timetags: " << summary.n_timetags << std::endl;
+            std::cout << "-------------------------------------\n";
+            std::cout << "Time: " << time_from_start << "\n";
+            std::cout << "Prompts: " << summary.n_prompts << "\n";
+            std::cout << "Delayeds: " << summary.n_delayeds << "\n";
+            std::cout << "Singles: " << summary.n_singles << "\n";
+            std::cout << "Timetags: " << summary.n_timetags << "\n";
             std::cout << "Iterations: " << summary.tot_entries << std::endl;
+            printed_time = time_from_start;
         }
     }
-
-    for (uint32_t address : *unique_bin_addresses)
-    {
-        std::cout << address << std::endl;
-    };
-
-    std::cout << "Found " << unique_bin_addresses->size() << " unique bin addresses in file." << std::endl;
 
     return 0;
 }
