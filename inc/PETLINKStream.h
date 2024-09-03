@@ -11,6 +11,8 @@ class Event {
 class Tag{
     public:
         Tag(uint32_t word);
+        bool is_timetag;
+        uint32_t elapsed_millis;
 };
 
 struct EventOrTag {
