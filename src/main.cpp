@@ -1,4 +1,6 @@
 #include <iostream>
+#include <set>
+#include <cstdint>
 #include "PETLINKStream.h"
 
 #define ITIME 1000  // Integration time (interval between two time tags?)
@@ -8,6 +10,7 @@ int main(int argc, char **argv) {
     PETLINKStream input_stream(filename);
 
     int time_from_start;  // Time since acquisition start in seconds
+    std::set<uint32_t>* unique_bin_addresses = new std::set<uint32_t>;
     unsigned long n_prompts = 0;
     unsigned long n_delayeds = 0;
     unsigned long n_singles = 0;
@@ -21,6 +24,7 @@ int main(int argc, char **argv) {
             Event* event = next->value;
             if (event->is_prompt) {
                 n_prompts++;
+                unique_bin_addresses->insert(event->bin_address);
             } else { // delayeds
                 n_delayeds++;
             };
@@ -34,7 +38,7 @@ int main(int argc, char **argv) {
         }
 
         n++;
-        if ((n_timetags % 100000) == 0) {
+        if ((n_timetags % 10000) == 0) {
             std::cout << "-------------------------------------" << std::endl;
             std::cout << "Time: " << time_from_start << std::endl;
             std::cout << "Prompts: " << n_prompts << std::endl;
@@ -45,7 +49,11 @@ int main(int argc, char **argv) {
         }
     }
 
-    input_stream.close();
+    for (uint32_t address : *unique_bin_addresses) {
+        std::cout << address << std::endl;
+    };
+
+    std::cout << "Found " << unique_bin_addresses->size() << " unique bin addresses in file." << std::endl;
 
     return 0;
 }
