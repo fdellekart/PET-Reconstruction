@@ -1,9 +1,10 @@
+#include <fstream>
 #include <cassert>
 #include "PETLINKStream.h"
 
 PETLINKStream::PETLINKStream(const char *listmode_file) : listmode_file(listmode_file)
 {
-    open(listmode_file);
+    open(listmode_file, std::ifstream::in | std::ifstream::binary);
 };
 
 PETLINKStream::~PETLINKStream() {
