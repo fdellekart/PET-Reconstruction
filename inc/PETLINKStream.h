@@ -4,6 +4,9 @@
 class Event {
     public:
         Event(uint32_t word);
+        bool is_prompt;
+        bool is_delayed;
+        uint32_t bin_address;
 };
 class Tag{
     public:

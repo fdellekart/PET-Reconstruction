@@ -1,3 +1,4 @@
+#include <cassert>
 #include "PETLINKStream.h"
 
 PETLINKStream::PETLINKStream(const char *listmode_file) : listmode_file(listmode_file)
@@ -20,4 +21,11 @@ EventOrTag* PETLINKStream::get_next() {
         result->value.event = new Event(current_word);
     }
     return result;
+};
+
+Event::Event(uint32_t word) {
+    assert(!(word >> 31));
+    is_prompt = static_cast<bool>(word>>30);
+    is_delayed = !is_prompt;
+    bin_address = word && 0x1ffffff;
 };
