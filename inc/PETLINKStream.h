@@ -20,6 +20,8 @@ struct EventOrTag {
     union {
         Event* event;
         Tag* tag;
+        operator Event* () const {return event;}
+        operator Tag* () const {return tag;}
     } value;
 };
 
