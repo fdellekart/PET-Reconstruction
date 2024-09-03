@@ -1,9 +1,11 @@
 #include<fstream>
 #include<memory>
 #include<cstdint>
+#include<variant>
 
 class Event {
     public:
+        Event() {Event(0);};
         Event(uint32_t word);
         bool is_prompt;
         bool is_delayed;
@@ -11,6 +13,7 @@ class Event {
 };
 class Tag{
     public:
+        Tag(): Tag(0xffffffff) {};
         Tag(uint32_t word);
         bool is_timetag;
         uint32_t elapsed_millis;
@@ -18,12 +21,8 @@ class Tag{
 
 struct EventOrTag {
     bool is_event;
-    union {
-        std::shared_ptr<Event> event;
-        std::shared_ptr<Tag> tag;
-        operator std::shared_ptr<Event> () const {return event;}
-        operator std::shared_ptr<Tag> () const {return tag;}
-    } value;
+    Event event;
+    Tag tag;
 };
 
 class PETLINKStream: public std::ifstream {

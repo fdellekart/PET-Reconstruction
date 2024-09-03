@@ -22,19 +22,17 @@ int main(int argc, char **argv) {
         std::shared_ptr<EventOrTag> next = input_stream.get_next();
         
         if (next->is_event) {
-            std::shared_ptr<Event> event = next->value;
-            if (event->is_prompt) {
+            if (next->event.is_prompt) {
                 n_prompts++;
-                unique_bin_addresses->insert(event->bin_address);
+                unique_bin_addresses->insert(next->event.bin_address);
             } else { // delayeds
                 n_delayeds++;
             };
         }
         else {
-            std::shared_ptr<Tag> tag = next->value;
-            if (tag->is_timetag) {
+            if (next->tag.is_timetag) {
                 n_timetags++;
-                time_from_start = tag->elapsed_millis / ITIME;
+                time_from_start = next->tag.elapsed_millis / ITIME;
             }
         }
 

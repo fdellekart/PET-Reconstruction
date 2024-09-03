@@ -17,10 +17,10 @@ std::shared_ptr<EventOrTag> PETLINKStream::get_next() {
     std::shared_ptr<EventOrTag> result = std::make_shared<EventOrTag>();
     if (current_word >> 31) {
         result->is_event = false;
-        result->value.tag = std::make_shared<Tag>(current_word);
+        result->tag = Tag(current_word);
     } else {
         result->is_event = true;
-        result->value.event = std::make_shared<Event>(current_word);
+        result->event = Event(current_word);
     }
     return result;
 };
