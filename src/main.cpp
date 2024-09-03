@@ -1,6 +1,6 @@
 #include <memory>
 #include <iostream>
-#include <set>
+#include <unordered_set>
 #include <cstdint>
 #include "PETLINKStream.h"
 
@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     PETLINKStream input_stream(filename);
 
     int time_from_start;  // Time since acquisition start in seconds
-    std::set<uint32_t>* unique_bin_addresses = new std::set<uint32_t>;
+    std::unordered_set<uint32_t>* unique_bin_addresses = new std::unordered_set<uint32_t>;
     unsigned long n_prompts = 0;
     unsigned long n_delayeds = 0;
     unsigned long n_singles = 0;
