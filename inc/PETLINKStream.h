@@ -3,6 +3,8 @@
 #include<cstdint>
 #include<variant>
 
+#define PETLINK_STREAM_BUFFER_SIZE 10000000000 // 10 GB
+
 class Event {
     public:
         Event() {Event(0);};

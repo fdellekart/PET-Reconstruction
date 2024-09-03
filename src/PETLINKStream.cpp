@@ -5,6 +5,8 @@
 
 PETLINKStream::PETLINKStream(const char *listmode_file) : listmode_file(listmode_file)
 {
+    char * buffer = new char[PETLINK_STREAM_BUFFER_SIZE]();
+    this->rdbuf()->pubsetbuf(buffer, PETLINK_STREAM_BUFFER_SIZE);
     open(listmode_file, std::ifstream::in | std::ifstream::binary);
 };
 
