@@ -1,3 +1,4 @@
+/// @brief Class to represent summary of data in listmode file
 class DataSummary
 {
 public:
