@@ -41,13 +41,25 @@ class PETLINKStream : public std::ifstream {
 public:
   PETLINKStream(const char *listmode_file);
   ~PETLINKStream();
+
   /// @brief Get the next element in the stream
   /// @return Tag or event, depending on what the next 32 bits represent
   std::shared_ptr<EventOrTag> get_next();
+
+  /// @brief Set the current position of the stream to a specific point in time
+  /// @param time milliseconds since start
+  /// @return bool indicating success
+  /// Implements a binary search to find the relevant timetag
+  /// because the exact position of the desired time cannot be known
+  bool seek_time(int32_t time);
 
 protected:
   const char *listmode_file;
 
 private:
   uint32_t current_word;
+
+  /// @brief Call get next timetag in stream
+  /// @return Time since start in milliseconds
+  uint32_t get_next_time();
 };

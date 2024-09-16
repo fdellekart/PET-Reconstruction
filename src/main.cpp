@@ -1,6 +1,7 @@
 #include "DataSummary.h"
 #include "PETLINKStream.h"
 #include <cstdint>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <unordered_set>
@@ -8,24 +9,32 @@
 #define ITIME 1000 // Integration time (interval between two time tags?)
 
 int main(int argc, char **argv) {
-  auto filename =
-      "/home/recon/Documents/Thesis-Dellekart/SIRF-STIR-PET-Reconstruction/"
-      "input/1.3.12.2.1107.5.2.38.51035.30000017121607191856600000009.bf";
+  auto filename = "/home/florian/Documents/Programming/MMR2PETSIRD/data/LM/"
+                  "17598013_1946_20150604155500.000000.bf";
   PETLINKStream input_stream(filename);
+  input_stream.seek_time(600);
+  exit(EXIT_SUCCESS);
+
   if (!input_stream.good()) {
     std::cerr << "File '" << filename << "' not found.";
     exit(EXIT_FAILURE);
   }
 
+  std::ofstream log;
+  log.open("/home/florian/Documents/Programming/MMR2PETSIRD/log.csv");
+  log << "Type, Value\n";
+
   int printed_time = 0;
 
-  int time_from_start; // Time since acquisition start in seconds
+  int time_from_start = 0; // Time since acquisition start in seconds
   DataSummary summary;
+  int last_val = 0;
 
   while (input_stream.good()) {
     std::shared_ptr<EventOrTag> next = input_stream.get_next();
 
     if (next->is_event) {
+      log << "Event, " << next->event.bin_address << "\n";
       if (next->event.is_prompt) {
         summary.n_prompts++;
       } else { // delayeds
@@ -33,8 +42,11 @@ int main(int argc, char **argv) {
       };
     } else {
       if (next->tag.is_timetag) {
+        log << "Time, " << next->tag.elapsed_millis << ","
+            << input_stream.tellg() << "\n";
         summary.n_timetags++;
         time_from_start = next->tag.elapsed_millis / ITIME;
+        last_val = next->tag.elapsed_millis;
       }
     }
 
@@ -51,6 +63,6 @@ int main(int argc, char **argv) {
       printed_time = time_from_start;
     }
   }
-
+  log.close();
   return 0;
 }
