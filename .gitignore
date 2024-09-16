@@ -3,3 +3,4 @@ build
 src/main
 src/PETLINKStream
 inc/PETLINKStream
+data
