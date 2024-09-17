@@ -60,3 +60,18 @@ TEST_F(PETLINKStreamTest, TestGetNext) {
   EXPECT_FALSE(element->event.is_prompt);
   EXPECT_EQ(element->event.bin_address, 1);
 }
+
+// Test if seek_time moves the stream to the proper timepoint
+TEST_F(PETLINKStreamTest, TestSeekTime) {
+  stream.seek_time(50);
+  auto element = stream.get_next();
+  EXPECT_FALSE(element->is_event);
+  EXPECT_TRUE(element->tag.is_timetag);
+  EXPECT_EQ(element->tag.elapsed_millis, 50);
+
+  stream.seek_time(73);
+  element = stream.get_next();
+  EXPECT_FALSE(element->is_event);
+  EXPECT_TRUE(element->tag.is_timetag);
+  EXPECT_EQ(element->tag.elapsed_millis, 73);
+}
