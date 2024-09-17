@@ -5,25 +5,17 @@
 #include <iostream>
 
 int main(int argc, char **argv) {
-  //   if (argc != 5) {
-  //     throw std::runtime_error("extract_timeframe takes exactly four
-  //     arguments "
-  //                              "for <inpath> <starttime> <endtime>
-  //                              <outpath>");
-  //   }
-  PETLINKStream stream("/home/florian/Documents/Programming/MMR2PETSIRD/data/"
-                       "LM/17598013_1946_20150604155500.000000.bf");
-  int time_start = 300000;
-  int time_end = 330000;
-  std::ofstream dest_file;
-  dest_file.open(
-      "/home/florian/Documents/Programming/MMR2PETSIRD/data/LM/truncated.bf",
-      std::fstream::binary);
-  if (!dest_file.good()) {
-    throw std::runtime_error("Problem loading destination file!");
+  if (argc != 5) {
+    throw std::runtime_error("extract_timeframe takes exactly four arguments "
+                             "for <inpath> <starttime> <endtime> <outpath>");
   }
-  if (!stream.good()) {
-    throw std::runtime_error("Problem loading input file!");
+  PETLINKStream stream(argv[1]);
+  int time_start = atoi(argv[2]);
+  int time_end = atoi(argv[3]);
+  std::ofstream dest_file;
+  dest_file.open(argv[4], std::fstream::binary);
+  if (!dest_file.good()) {
+    throw std::runtime_error("Problem loading file!");
   }
 
   stream.seek_time(time_start);

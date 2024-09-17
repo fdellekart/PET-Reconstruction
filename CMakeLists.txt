@@ -23,3 +23,6 @@ gtest_discover_tests(tests)
 set(SOURCE_FILES src/main.cpp src/PETLINKStream.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE inc)
+
+add_executable(extract_timeframe src/extract_timeframe.cpp src/PETLINKStream.cpp)
+target_include_directories(extract_timeframe PRIVATE inc)
