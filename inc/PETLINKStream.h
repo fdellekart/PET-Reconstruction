@@ -14,6 +14,7 @@ class Event {
 public:
   Event() { Event(0); };
   Event(uint32_t word);
+  uint32_t word;
   bool is_prompt;
   bool is_delayed;
   uint32_t bin_address;
@@ -25,6 +26,7 @@ class Tag {
 public:
   Tag() : Tag(0xffffffff) {};
   Tag(uint32_t word);
+  uint32_t word;
   bool is_timetag;
   uint32_t elapsed_millis;
 };

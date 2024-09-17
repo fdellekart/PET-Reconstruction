@@ -70,14 +70,14 @@ uint32_t PETLINKStream::get_next_time() {
   return time;
 };
 
-Event::Event(uint32_t word) {
+Event::Event(uint32_t word) : word(word) {
   assert(!(word >> 31));
   is_prompt = static_cast<bool>(word >> 30);
   is_delayed = !is_prompt;
   bin_address = word & 0x1ffffff;
 };
 
-Tag::Tag(uint32_t word) {
+Tag::Tag(uint32_t word) : word(word) {
   assert((word >> 31));
   is_timetag = (word >> 29) == 0x4;
   elapsed_millis = word & 0x01ffffff;
