@@ -41,6 +41,7 @@ bool PETLINKStream::seek_time(int32_t time) {
 
   while (!success) {
     middle_position = (bigger_position + smaller_position) / 2;
+    middle_position = (middle_position / 4) * 4; // Round to next multiple of 4
     this->seekg(middle_position);
     next_time = this->get_next_time();
     if (next_time == time)
