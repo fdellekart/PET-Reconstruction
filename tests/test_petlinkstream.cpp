@@ -10,19 +10,15 @@ protected:
     uint32_t value;
     testfile.open(filepath, std::ios_base::binary);
 
-    value = 0b10000000000000000000000000000001; // timetag 1 ms
-    write_value(value);
-    value = 0b01000000000000000000000000000001; // prompt /w bin address 1
-    write_value(value);
-    value = 0b00000000000000000000000000000001; // delayed /w bin address 1
-    write_value(value);
-
-    value = 0b10000000000000000000000000000010; // timetag 2 ms
-    write_value(value);
-    value = 0b01000000000000000000000000000010; // prompt /w bin address 2
-    write_value(value);
-    value = 0b00000000000000000000000000000010; // delayed /w bin address 2
-    write_value(value);
+    for (uint32_t i = 1; i < 100; i++) {
+      value = 0b10000000000000000000000000000000 | i; // timetag i ms
+      write_value(value);
+      value = 0b01000000000000000000000000000000 | i; // prompt /w bin address i
+      write_value(value);
+      value =
+          0b00000000000000000000000000000000 | i; // delayed /w bin address i
+      write_value(value);
+    }
 
     testfile.close();
     stream.open(filepath, std::ifstream::in | std::ifstream::binary);
@@ -41,7 +37,7 @@ private:
   };
 };
 
-// Demonstrate some basic assertions.
+// Test if get_next properly parses individual entries
 TEST_F(PETLINKStreamTest, TestGetNext) {
   ASSERT_TRUE(stream.good());
 
