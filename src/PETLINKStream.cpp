@@ -61,8 +61,8 @@ uint32_t PETLINKStream::get_next_time() {
     if (!next->is_event && next->tag.is_timetag)
       time = next->tag.elapsed_millis;
     if (this->eof()) {
-      std::cout << "End Of File" << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Encountered EOF in PETLINK binary search. This "
+                               "shouldn't be possible");
     };
   }
   this->seekg(this->tellg() - sizeof(int32_t));
