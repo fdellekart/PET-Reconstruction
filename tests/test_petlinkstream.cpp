@@ -42,9 +42,25 @@ private:
 };
 
 // Demonstrate some basic assertions.
-TEST_F(PETLINKStreamTest, BasicAssertions) {
-  // Expect two strings not to be equal.
-  EXPECT_TRUE(stream.good());
-  // Expect equality.
-  EXPECT_EQ(7 * 6, 42);
+TEST_F(PETLINKStreamTest, TestGetNext) {
+  ASSERT_TRUE(stream.good());
+
+  std::shared_ptr<EventOrTag> element;
+
+  element = stream.get_next();
+  ASSERT_FALSE(element->is_event);
+  EXPECT_TRUE(element->tag.is_timetag);
+  EXPECT_EQ(element->tag.elapsed_millis, 1);
+
+  element = stream.get_next();
+  ASSERT_TRUE(element->is_event);
+  EXPECT_TRUE(element->event.is_prompt);
+  EXPECT_FALSE(element->event.is_delayed);
+  EXPECT_EQ(element->event.bin_address, 1);
+
+  element = stream.get_next();
+  ASSERT_TRUE(element->is_event);
+  EXPECT_TRUE(element->event.is_delayed);
+  EXPECT_FALSE(element->event.is_prompt);
+  EXPECT_EQ(element->event.bin_address, 1);
 }
