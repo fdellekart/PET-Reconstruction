@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <variant>
@@ -39,7 +40,10 @@ struct EventOrTag {
 /// @brief Input filestream to read listmode files in 32 bit PETLINK format
 class PETLINKStream : public std::ifstream {
 public:
+  PETLINKStream() {};
   PETLINKStream(const char *listmode_file);
+  PETLINKStream(std::filesystem::path listmode_file)
+      : PETLINKStream(listmode_file.c_str()) {};
   ~PETLINKStream();
 
   /// @brief Get the next element in the stream
