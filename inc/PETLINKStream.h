@@ -55,6 +55,9 @@ public:
   /// @return bool indicating success
   /// Implements a binary search to find the relevant timetag
   /// because the exact position of the desired time cannot be known
+  ///
+  /// CAUTION: FIXME: Currently wouldn't work with a file that has a timetag for
+  /// 0 ms or if the inidividual timetags are not exactly 1 ms apart.
   bool seek_time(int32_t time);
 
 protected:
