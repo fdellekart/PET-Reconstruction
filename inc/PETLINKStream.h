@@ -55,8 +55,12 @@ public:
   /// @brief Set the current position of the stream to a specific point in time
   /// @param time milliseconds since start
   /// @return bool indicating success
+  ///
   /// Implements a binary search to find the relevant timetag
   /// because the exact position of the desired time cannot be known
+  ///
+  /// Stream will be positioned such that the returned element on the get_next
+  /// call Is the requested timetag
   ///
   /// CAUTION: FIXME: Currently wouldn't work with a file that has a timetag for
   /// 0 ms or if the inidividual timetags are not exactly 1 ms apart.
@@ -68,7 +72,9 @@ protected:
 private:
   uint32_t current_word;
 
-  /// @brief Call get next timetag in stream
+  /// @brief Call get next until next timetag is encountered
   /// @return Time since start in milliseconds
+  ///
+  /// Resets the stream so that the next get_next call returns that timetag
   uint32_t get_next_time();
 };
