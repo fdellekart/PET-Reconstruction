@@ -14,8 +14,11 @@ int main(int argc, char **argv) {
   int time_end = atoi(argv[3]);
   std::ofstream dest_file;
   dest_file.open(argv[4], std::fstream::binary);
+  if (!stream.good()) {
+    throw std::runtime_error("Problem loading input file!");
+  }
   if (!dest_file.good()) {
-    throw std::runtime_error("Problem loading file!");
+    throw std::runtime_error("Problem loading destination file!");
   }
 
   stream.seek_time(time_start);
