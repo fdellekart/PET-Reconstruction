@@ -23,10 +23,11 @@ int main(int argc, char **argv) {
 
   stream.seek_time(time_start);
   auto next_element = stream.get_next();
-  assert(next_element->is_event);
+  assert(!next_element->is_event);
   Tag tag = next_element->tag;
   assert(tag.is_timetag);
   int time = tag.elapsed_millis;
+  int i = 0;
 
   int32_t word;
   while (time != time_end) {
@@ -44,7 +45,8 @@ int main(int argc, char **argv) {
     }
     dest_file.write(reinterpret_cast<const char *>(&word), sizeof(uint32_t));
     next_element = stream.get_next();
+    i++;
   };
-
+  std::cout << "Total words: " << i << std::endl;
   dest_file.close();
 }
