@@ -57,16 +57,18 @@ public:
     iterator(PETLINKStream *s = nullptr, bool is_end = false) : stream(s) {
       if (stream && !is_end && *stream) {
         current_element = stream->get_next();
+        if (stream->eof())
+          stream = nullptr;
       } else {
         stream = nullptr;
       }
     }
     std::shared_ptr<EventOrTag> operator*() const { return current_element; };
     iterator &operator++() {
-      if (stream && !stream->eof()) {
+      if (stream) {
         current_element = stream->get_next();
-      } else {
-        stream = nullptr;
+        if (stream->eof())
+          stream = nullptr;
       }
       return *this;
     };
