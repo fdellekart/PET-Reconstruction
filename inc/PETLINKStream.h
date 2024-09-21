@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <memory>
 #include <variant>
 
@@ -47,6 +48,44 @@ public:
   PETLINKStream(std::filesystem::path listmode_file)
       : PETLINKStream(listmode_file.c_str()) {};
   ~PETLINKStream();
+
+  struct iterator {
+    PETLINKStream *stream;
+    std::shared_ptr<EventOrTag> current_element;
+
+  public:
+    iterator(PETLINKStream *s = nullptr, bool is_end = false) : stream(s) {
+      if (stream && !is_end && *stream) {
+        current_element = stream->get_next();
+      } else {
+        stream = nullptr;
+      }
+    }
+    std::shared_ptr<EventOrTag> operator*() const { return current_element; };
+    iterator &operator++() {
+      if (stream && !stream->eof()) {
+        current_element = stream->get_next();
+      } else {
+        stream = nullptr;
+      }
+      return *this;
+    };
+
+    iterator operator++(int) {
+      iterator temp = *this;
+      ++(*this);
+      return temp;
+    };
+
+    bool operator==(const iterator &other) const {
+      return stream == other.stream;
+    };
+    bool operator!=(iterator other) const { return !(*this == other); };
+  };
+
+  iterator begin() { return iterator(this); }
+
+  iterator end() { return iterator(this, true); }
 
   /// @brief Get the next element in the stream
   /// @return Tag or event, depending on what the next 32 bits represent

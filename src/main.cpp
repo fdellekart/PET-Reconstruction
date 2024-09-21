@@ -30,9 +30,7 @@ int main(int argc, char **argv) {
   DataSummary summary;
   int last_val = 0;
 
-  while (input_stream.good()) {
-    std::shared_ptr<EventOrTag> next = input_stream.get_next();
-
+  for (std::shared_ptr<EventOrTag> next : input_stream) {
     if (next->is_event) {
       log << "Event, " << next->event.bin_address << "\n";
       if (next->event.is_prompt) {
