@@ -75,3 +75,22 @@ TEST_F(PETLINKStreamTest, TestSeekTime) {
   EXPECT_TRUE(element->tag.is_timetag);
   EXPECT_EQ(element->tag.elapsed_millis, 73);
 }
+
+// Test if the iterator works properly
+// Checks that consecutive events never match
+// to ensure that last element is not returned twice
+//
+// This could fail unintended if two identical events
+// are put after each other in the stream fixture
+TEST_F(PETLINKStreamTest, TestIterator) {
+  EventOrTag last = EventOrTag();
+  bool is_first_iter = true;
+
+  for (std::shared_ptr<EventOrTag> element : stream) {
+    if (!is_first_iter) {
+      ASSERT_NE(last.event.word, element->event.word);
+    }
+    last = *element;
+    is_first_iter = false;
+  }
+}
