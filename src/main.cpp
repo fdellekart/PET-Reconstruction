@@ -1,15 +1,10 @@
+#include "Constants.h"
 #include "DataSummary.h"
 #include "PETLINKStream.h"
 #include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <memory>
-
-#define ITIME 1000 // Integration time (interval between two time tags?)
-
-#define NSBINS 344
-#define NSANGLES 252
-#define NSINOS 4084
 
 int main(int argc, char **argv) {
   auto filename = "/home/florian/Documents/Programming/MMR2PETSIRD/data/LM/"

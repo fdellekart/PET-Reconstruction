@@ -1,5 +1,5 @@
+#include "Constants.h"
 #include <cstdint>
-#define DETECTORS_PER_RING 2 * 252
 
 struct DetectorPair {
   int32_t det_idx_1;
