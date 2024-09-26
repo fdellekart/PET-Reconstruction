@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include <unordered_set>
 
 #define ITIME 1000 // Integration time (interval between two time tags?)
 
