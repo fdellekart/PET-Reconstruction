@@ -18,9 +18,9 @@ void LookupTable::initialize_table() {
          tang_idx++) {
       arr_idx = tang_idx + det_per_ring / 2 - 1;
       this->table[ang_idx][arr_idx].det_idx_1 =
-          (ang_idx + (tang_idx >> 1)) % det_per_ring;
+          (ang_idx + tang_idx / 2) % det_per_ring;
       this->table[ang_idx][arr_idx].det_idx_2 =
-          (ang_idx - ((tang_idx + 1) >> 1) + det_per_ring / 2) % det_per_ring;
+          (ang_idx - (tang_idx + 1) / 2 + det_per_ring / 2) % det_per_ring;
     };
   };
 };
