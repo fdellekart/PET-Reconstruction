@@ -1,5 +1,7 @@
 #include "Constants.h"
+#include <array>
 #include <cstdint>
+#include <memory>
 
 struct DetectorPair {
   int32_t det_idx_1;
@@ -10,7 +12,10 @@ struct DetectorPair {
 // and tangential position into a pair of detector indexes
 class LookupTable {
 public:
-  LookupTable() : table() { initialize_table(); };
+  using TableT =
+      std::array<std::array<DetectorPair, NSBINS>, DETECTORS_PER_RING / 2>;
+
+  LookupTable() : table(std::make_unique<TableT>()) { initialize_table(); };
 
   // Get the detector pair corresponding to a particular LOR
   DetectorPair lookup(int32_t angle_num, int32_t tang_pos_num);
@@ -27,7 +32,7 @@ public:
 
 private:
   // 2D Array, size: num_angles, num_tangential
-  DetectorPair table[DETECTORS_PER_RING / 2][NSBINS];
+  std::unique_ptr<TableT> table;
 
   // Fill the table array with values
   void initialize_table();
