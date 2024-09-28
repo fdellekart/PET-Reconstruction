@@ -8,19 +8,17 @@ int32_t LookupTable::table_idx_to_tang_pos(int32_t table_idx) {
 };
 
 void LookupTable::initialize_table() {
-  int32_t det_per_ring = DETECTORS_PER_RING;
-  int32_t arr_idx;
-  const int32_t min_tang_pos_num = -(det_per_ring / 2) + 1;
-  const int32_t max_tang_pos_num = det_per_ring / 2;
+  for (int32_t ang_pos_num = 0; ang_pos_num < det_per_ring / 2; ang_pos_num++) {
+    for (int32_t tang_pos_num = min_tang_pos_num, tang_arr_idx;
+         tang_pos_num <= max_tang_pos_num; tang_pos_num++) {
+      tang_arr_idx = tang_pos_to_table_idx(tang_pos_num);
 
-  for (int ang_idx = 0; ang_idx < det_per_ring / 2; ang_idx++) {
-    for (int tang_idx = min_tang_pos_num; tang_idx <= max_tang_pos_num;
-         tang_idx++) {
-      arr_idx = tang_idx + det_per_ring / 2 - 1;
-      (*table)[ang_idx][arr_idx].det_idx_1 =
-          (ang_idx + tang_idx / 2) % det_per_ring;
-      (*table)[ang_idx][arr_idx].det_idx_2 =
-          (ang_idx - (tang_idx + 1) / 2 + det_per_ring / 2) % det_per_ring;
+      (*table)[ang_pos_num][tang_arr_idx].det_idx_1 =
+          (ang_pos_num + tang_pos_num / 2) % det_per_ring;
+
+      (*table)[ang_pos_num][tang_arr_idx].det_idx_2 =
+          (ang_pos_num - (tang_pos_num + 1) / 2 + det_per_ring / 2) %
+          det_per_ring;
     };
   };
 };

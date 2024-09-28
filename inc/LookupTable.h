@@ -18,7 +18,7 @@ public:
   LookupTable() : table(std::make_unique<TableT>()) { initialize_table(); };
 
   // Get the detector pair corresponding to a particular LOR
-  DetectorPair lookup(int32_t angle_num, int32_t tang_pos_num);
+  const DetectorPair &lookup(int32_t angle_num, int32_t tang_pos_num);
 
   // Transform detector number to an index in the table
   //
@@ -38,5 +38,11 @@ private:
   void initialize_table();
 
   // Number of detectors per ring
-  int32_t det_per_ring = DETECTORS_PER_RING;
+  const int32_t det_per_ring = DETECTORS_PER_RING;
+
+  // Maximum tangential position number
+  const int32_t min_tang_pos_num = -(det_per_ring / 2) + 1;
+
+  // Minimum tangential position number
+  const int32_t max_tang_pos_num = det_per_ring / 2;
 };
