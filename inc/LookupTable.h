@@ -3,12 +3,20 @@
 #include <cstdint>
 #include <memory>
 
-struct DetectorPair {
-  // Index in ring of first detector, 0 to 503
-  int32_t det_idx_1;
+class Detector {
+public:
+  Detector(int32_t idx, int32_t ring_idx) : idx(idx), ring_idx(ring_idx) {};
 
-  // Index in ring of second detector, 0 to 503
-  int32_t det_idx_2;
+  // Index in ring, 0 to 503
+  int32_t idx;
+
+  // Index of ring, 0 to 64
+  int32_t ring_idx;
+};
+
+struct DetectorPair {
+  Detector first;
+  Detector second;
 };
 
 /// @brief Lookuptable to transform a LOR identified by angle
