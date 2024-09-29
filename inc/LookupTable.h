@@ -4,20 +4,28 @@
 #include <memory>
 
 struct DetectorPair {
+  // Index in ring of first detector, 0 to 503
   int32_t det_idx_1;
+
+  // Index in ring of second detector, 0 to 503
   int32_t det_idx_2;
 };
 
-// Lookuptable to transform a LOR identified by angle
-// and tangential position into a pair of detector indexes
+/// @brief Lookuptable to transform a LOR identified by angle
+/// and tangential position into a pair of detector indexes
 class LookupTable {
 public:
   LookupTable() : table(std::make_unique<TableT>()) { initialize_table(); };
 
-  // Get the detector pair corresponding to a particular LOR
+  /// @brief Get the detector pair corresponding to a particular LOR
+  /// @param angle_num Projection view number, 0 to 252
+  /// @param tang_pos_num Tangential position number, -251 to 252
+  /// @return Reference to struct describing the detector pair
   const DetectorPair &lookup(int32_t angle_num, int32_t tang_pos_num);
 
 private:
+  // TODO: Is NSBINS really correct here?
+  // It is 344 but there are det_per_ring rows added to the table
   using TableT =
       std::array<std::array<DetectorPair, NSBINS>, DETECTORS_PER_RING / 2>;
 
