@@ -13,6 +13,13 @@ int32_t LookupTable::tang_pos_to_table_idx(int32_t tang_pos_num) {
 
 const DetectorPair &LookupTable::lookup(int32_t angle_num,
                                         int32_t tang_pos_num) {
+  assert(angle_num >= 0 && "Angle number must be positive");
+  assert(angle_num <= 251 && "Maximum angle number is 251");
+  assert(tang_pos_num >= min_tang_pos_num &&
+         "Minimum tangential number is -251");
+  assert(tang_pos_num <= max_tang_pos_num &&
+         "Maximum tangential number is 252");
+
   int32_t tang_pos_idx = tang_pos_to_table_idx(tang_pos_num);
   return (*table)[angle_num][tang_pos_idx];
 };
