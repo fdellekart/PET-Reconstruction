@@ -34,5 +34,15 @@ TEST(LookupTableTest, TestLookup) {
   EXPECT_EQ(det_pair.det_idx_1, 503);
   EXPECT_EQ(det_pair.det_idx_2, 253);
 
+  det_pair = LUT->lookup(0, -251);
+
+  EXPECT_EQ(det_pair.det_idx_1, 379);
+  EXPECT_EQ(det_pair.det_idx_2, 377);
+
+  det_pair = LUT->lookup(251, 0);
+
+  EXPECT_EQ(det_pair.det_idx_1, 251);
+  EXPECT_EQ(det_pair.det_idx_2, 503);
+
   delete LUT;
 }
