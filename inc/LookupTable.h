@@ -15,7 +15,9 @@ struct DetectorPair {
 /// and tangential position into a pair of detector indexes
 class LookupTable {
 public:
-  LookupTable() : table(std::make_unique<TableT>()) { initialize_table(); };
+  LookupTable() : transaxial_table(std::make_unique<TransaxialTableT>()) {
+    initialize_table();
+  };
 
   /// @brief Get the detector pair corresponding to a particular LOR
   /// @param angle_num Projection view number, 0 to 252
@@ -26,11 +28,11 @@ public:
 private:
   // TODO: Is NSBINS really correct here?
   // It is 344 but there are det_per_ring rows added to the table
-  using TableT =
+  using TransaxialTableT =
       std::array<std::array<DetectorPair, NSBINS>, DETECTORS_PER_RING / 2>;
 
   // 2D Array, size: num_angles, num_tangential
-  std::unique_ptr<TableT> table;
+  std::unique_ptr<TransaxialTableT> transaxial_table;
 
   // Fill the table array with values
   void initialize_table();
