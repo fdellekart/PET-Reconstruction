@@ -25,7 +25,7 @@ void LookupTable::initialize_table() {
       tang_arr_idx = tang_pos_to_table_idx(tang_pos_num);
 
       (*table)[ang_pos_num][tang_arr_idx].det_idx_1 =
-          (ang_pos_num + tang_pos_num / 2) % det_per_ring;
+          (ang_pos_num + tang_pos_num / 2 + det_per_ring) % det_per_ring;
 
       (*table)[ang_pos_num][tang_arr_idx].det_idx_2 =
           (ang_pos_num - (tang_pos_num + 1) / 2 + det_per_ring / 2) %
