@@ -2,9 +2,11 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <utility>
 
 class Detector {
 public:
+  Detector() : idx(0), ring_idx(0) {};
   Detector(int32_t idx, int32_t ring_idx) : idx(idx), ring_idx(ring_idx) {};
 
   // Index in ring, 0 to 503
@@ -24,7 +26,7 @@ struct DetectorPair {
 class LookupTable {
 public:
   LookupTable() : transaxial_table(std::make_unique<TransaxialTableT>()) {
-    initialize_table();
+    initialize_tables();
   };
 
   /// @brief Get the detector pair corresponding to a particular LOR
@@ -39,14 +41,30 @@ private:
   using TransaxialTableT =
       std::array<std::array<DetectorPair, NSBINS>, DETECTORS_PER_RING / 2>;
 
+  using AxialTableT = std::array<std::pair<int32_t, int32_t>, NSINOS>;
+
   // 2D Array, size: num_angles, num_tangential
   std::unique_ptr<TransaxialTableT> transaxial_table;
 
+  // Array to look up ring indexes of LOR by segment number
+  std::unique_ptr<AxialTableT> axial_table;
+
   // Fill the table array with values
-  void initialize_table();
+  void initialize_tables();
 
   // Number of detectors per ring
   const int32_t det_per_ring = DETECTORS_PER_RING;
+
+  std::array<int32_t, NSINOS> segment_table;
+
+  // Maximum segment number identifying sinogram for span 1
+  const int32_t max_segment_num = NSINOS - 1;
+
+  // Segments are labeled according to their ring difference
+  // Zeros are direct Sinograms and for the rest the number
+  // identifies how far they are tilted and the sign the direction
+  // Looks as: 0, 1, -1, 2, -2, ....
+  std::array<int32_t, NSINOS> segment_offsets;
 
   // Maximum tangential position number
   const int32_t min_tang_pos_num = -(det_per_ring / 2) + 1;

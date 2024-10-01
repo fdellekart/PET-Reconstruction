@@ -1,6 +1,7 @@
 #include "Constants.h"
 #include "DataSummary.h"
 #include "PETLINKStream.h"
+#include <cassert>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -53,7 +54,7 @@ int main(int argc, char **argv) {
 
     summary.tot_entries++;
 
-    if (printed_time != time_from_start && ((time_from_start % 10) == 0)) {
+    if (printed_time != time_from_start && ((time_from_start % 1000) == 0)) {
       std::cout << "-------------------------------------\n";
       std::cout << "Time: " << time_from_start << "\n";
       std::cout << "Tangential: " << tang_pos_num << "\n";

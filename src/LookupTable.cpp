@@ -24,7 +24,7 @@ const DetectorPair &LookupTable::lookup(int32_t angle_num,
   return (*transaxial_table)[angle_num][tang_pos_idx];
 };
 
-void LookupTable::initialize_table() {
+void LookupTable::initialize_tables() {
   for (int32_t ang_pos_num = 0; ang_pos_num < det_per_ring / 2; ang_pos_num++) {
     for (int32_t tang_pos_num = min_tang_pos_num, tang_arr_idx;
          tang_pos_num <= max_tang_pos_num; tang_pos_num++) {
@@ -38,5 +38,11 @@ void LookupTable::initialize_table() {
           (ang_pos_num - (tang_pos_num + 1) / 2 + det_per_ring / 2) %
           det_per_ring;
     };
+  };
+
+  segment_offsets[0] = 0;
+  for (int segment_num = 1; segment_num <= max_segment_num; ++segment_num) {
+    segment_offsets[2 * segment_num - 1] = -segment_num;
+    segment_offsets[2 * segment_num] = segment_num;
   };
 };
