@@ -16,9 +16,13 @@ public:
   int32_t ring_idx;
 };
 
-struct DetectorPair {
-  Detector first;
-  Detector second;
+class DetectorPair {
+public:
+  DetectorPair()
+      : first(std::make_shared<Detector>()),
+        second(std::make_shared<Detector>()) {}
+  std::shared_ptr<Detector> first;
+  std::shared_ptr<Detector> second;
 };
 
 /// @brief Lookuptable to transform a LOR identified by angle
