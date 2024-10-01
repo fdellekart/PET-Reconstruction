@@ -39,7 +39,8 @@ private:
   // TODO: Is NSBINS really correct here?
   // It is 344 but there are det_per_ring rows added to the table
   using TransaxialTableT =
-      std::array<std::array<DetectorPair, NSBINS>, DETECTORS_PER_RING / 2>;
+      std::array<std::array<DetectorPair, DETECTORS_PER_RING>,
+                 DETECTORS_PER_RING / 2>;
 
   using AxialTableT = std::array<std::pair<int32_t, int32_t>, NSINOS>;
 
