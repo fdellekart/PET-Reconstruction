@@ -1,6 +1,7 @@
 #include "Constants.h"
 #include <array>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <utility>
 
@@ -69,7 +70,7 @@ private:
   // Zeros are direct Sinograms and for the rest the number
   // identifies how far they are tilted and the sign the direction
   // Looks as: 0, 1, -1, 2, -2, ....
-  std::array<int32_t, NSINOS> segment_offsets;
+  std::array<int32_t, 2 * NSINOS - 1> segment_offsets;
 
   // Maximum tangential position number
   const int32_t min_tang_pos_num = -(det_per_ring / 2) + 1;
