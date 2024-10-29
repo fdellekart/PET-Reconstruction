@@ -2,41 +2,46 @@
 #include "Constants.h"
 #include <cassert>
 #include <cstdint>
+#include <format>
 
 int32_t LookupTable::table_idx_to_tang_pos(int32_t table_idx) {
-  return table_idx - (det_per_ring / 2) + 1;
+  return table_idx - (NSBINS / 2) + 1;
 };
 
 int32_t LookupTable::tang_pos_to_table_idx(int32_t tang_pos_num) {
-  return tang_pos_num + (det_per_ring / 2) - 1;
+  return tang_pos_num + (NSBINS / 2) - 1;
 };
 
-const DetectorPair &LookupTable::lookup(int32_t angle_num,
-                                        int32_t tang_pos_num) {
+std::pair<int32_t, int32_t> LookupTable::lookup(int32_t angle_num,
+                                                int32_t tang_pos_num) {
   assert(angle_num >= 0 && "Angle number must be positive");
   assert(angle_num <= 251 && "Maximum angle number is 251");
   assert(tang_pos_num >= min_tang_pos_num &&
-         "Minimum tangential number is -251");
+         "Minimum tangential number is -171");
   assert(tang_pos_num <= max_tang_pos_num &&
-         "Maximum tangential number is 252");
+         "Maximum tangential number is 171");
 
   int32_t tang_pos_idx = tang_pos_to_table_idx(tang_pos_num);
-  return (*transaxial_table)[angle_num][tang_pos_idx];
+  auto pos_in_ring = transaxial_table->at(angle_num).at(tang_pos_idx);
+  return pos_in_ring;
 };
 
 void LookupTable::initialize_tables() {
+  std::pair<int32_t, int32_t> idxs_in_ring;
+
   for (int32_t ang_pos_num = 0; ang_pos_num < det_per_ring / 2; ang_pos_num++) {
     for (int32_t tang_pos_num = min_tang_pos_num, tang_arr_idx;
          tang_pos_num <= max_tang_pos_num; tang_pos_num++) {
 
       tang_arr_idx = tang_pos_to_table_idx(tang_pos_num);
-
-      (*transaxial_table)[ang_pos_num][tang_arr_idx].first->idx =
+      int32_t first_idx =
           (ang_pos_num + tang_pos_num / 2 + det_per_ring) % det_per_ring;
-
-      (*transaxial_table)[ang_pos_num][tang_arr_idx].second->idx =
+      int32_t second_idx =
           (ang_pos_num - (tang_pos_num + 1) / 2 + det_per_ring / 2) %
           det_per_ring;
+
+      idxs_in_ring = std::make_pair(first_idx, second_idx);
+      transaxial_table->at(ang_pos_num).at(tang_arr_idx) = idxs_in_ring;
     };
   };
 

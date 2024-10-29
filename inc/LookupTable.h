@@ -38,21 +38,23 @@ public:
   /// @param angle_num Projection view number, 0 to 252
   /// @param tang_pos_num Tangential position number, -251 to 252
   /// @return Reference to struct describing the detector pair
-  const DetectorPair &lookup(int32_t angle_num, int32_t tang_pos_num);
+  std::pair<int32_t, int32_t> lookup(int32_t angle_num, int32_t tang_pos_num);
 
 private:
   // TODO: Is NSBINS really correct here?
   // It is 344 but there are det_per_ring rows added to the table
   using TransaxialTableT =
-      std::array<std::array<DetectorPair, DETECTORS_PER_RING>,
+      std::array<std::array<std::pair<int32_t, int32_t>, NSBINS>,
                  DETECTORS_PER_RING / 2>;
 
   using AxialTableT = std::array<std::pair<int32_t, int32_t>, NSINOS>;
 
-  // 2D Array, size: num_angles, num_tangential
+  // 2D Array to look up the index of a detector within a ring
+  // from the angle number and transaxial bin number
+  // size: num_angles, num_tangential
   std::unique_ptr<TransaxialTableT> transaxial_table;
 
-  // Array to look up ring indexes of LOR by segment number
+  // 1D Array to look up ring indexes of detector pair by segment number
   std::unique_ptr<AxialTableT> axial_table;
 
   // Fill the table array with values
@@ -73,10 +75,10 @@ private:
   std::array<int32_t, 2 * NSINOS - 1> segment_offsets;
 
   // Maximum tangential position number
-  const int32_t min_tang_pos_num = -(det_per_ring / 2) + 1;
+  const int32_t min_tang_pos_num = -(NSBINS / 2 - 1);
 
   // Minimum tangential position number
-  const int32_t max_tang_pos_num = det_per_ring / 2;
+  const int32_t max_tang_pos_num = NSBINS / 2;
 
   // Transform detector number to an index in the table
   //
