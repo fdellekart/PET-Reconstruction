@@ -36,8 +36,14 @@ public:
 /// Can have either tag or event set but not both
 struct EventOrTag {
   bool is_event;
-  Event event;
-  Tag tag;
+  std::unique_ptr<Event> event;
+  std::unique_ptr<Tag> tag;
+
+public:
+  EventOrTag() = default;
+  EventOrTag(const EventOrTag &) = delete;
+  EventOrTag &operator=(const EventOrTag &) = delete;
+  ~EventOrTag() = default;
 };
 
 /// @brief Input filestream to read listmode files in 32 bit PETLINK format

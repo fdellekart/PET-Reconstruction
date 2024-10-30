@@ -19,10 +19,10 @@ std::shared_ptr<EventOrTag> PETLINKStream::get_next() {
   std::shared_ptr<EventOrTag> result = std::make_shared<EventOrTag>();
   if (current_word >> 31) {
     result->is_event = false;
-    result->tag = Tag(current_word);
+    result->tag = std::make_unique<Tag>(current_word);
   } else {
     result->is_event = true;
-    result->event = Event(current_word);
+    result->event = std::make_unique<Event>(current_word);
   }
   return result;
 };
@@ -59,8 +59,8 @@ uint32_t PETLINKStream::get_next_time() {
   uint32_t time = 0;
   while (!time && !this->eof()) {
     auto next = this->get_next();
-    if (!next->is_event && next->tag.is_timetag)
-      time = next->tag.elapsed_millis;
+    if (!next->is_event && next->tag->is_timetag)
+      time = next->tag->elapsed_millis;
     if (this->eof()) {
       throw std::runtime_error("Encountered EOF in PETLINK binary search. This "
                                "shouldn't be possible");

@@ -36,19 +36,19 @@ int main(int argc, char **argv) {
 
   for (std::shared_ptr<EventOrTag> next : input_stream) {
     if (next->is_event) {
-      bin_address = next->event.bin_address;
+      bin_address = next->event->bin_address;
       tang_pos_num = bin_address % NSBINS;
       rest = bin_address / NSBINS;
       angle_num = rest % NSANGLES; // view num
       rest = rest / NSANGLES;
       sino_num = rest % NSINOS;
     } else {
-      if (next->tag.is_timetag) {
-        log << "Time, " << next->tag.elapsed_millis << ","
+      if (next->tag->is_timetag) {
+        log << "Time, " << next->tag->elapsed_millis << ","
             << input_stream.tellg() << "\n";
         summary.n_timetags++;
-        time_from_start = next->tag.elapsed_millis / ITIME;
-        last_val = next->tag.elapsed_millis;
+        time_from_start = next->tag->elapsed_millis / ITIME;
+        last_val = next->tag->elapsed_millis;
       }
     }
 

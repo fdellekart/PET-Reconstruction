@@ -24,20 +24,18 @@ int main(int argc, char **argv) {
   stream.seek_time(time_start);
   auto next_element = stream.get_next();
   assert(!next_element->is_event);
-  Tag tag = next_element->tag;
-  assert(tag.is_timetag);
-  int time = tag.elapsed_millis;
+  assert(next_element->tag->is_timetag);
+  int time = next_element->tag->elapsed_millis;
   int i = 0;
 
   int32_t word;
   while (time != time_end) {
     if (next_element->is_event) {
-      word = next_element->event.word;
+      word = next_element->event->word;
     } else {
-      tag = next_element->tag;
-      word = tag.word;
-      if (tag.is_timetag) {
-        time = tag.elapsed_millis;
+      word = next_element->tag->word;
+      if (next_element->tag->is_timetag) {
+        time = next_element->tag->elapsed_millis;
         if (time % 100 == 0) {
           std::cout << "Processed " << time << " ms" << std::endl;
         }
