@@ -14,18 +14,29 @@ int32_t LookupTable::tang_pos_to_table_idx(int32_t tang_pos_num) {
   return tang_pos_num + (NSBINS / 2) - 1;
 };
 
-std::pair<int32_t, int32_t> LookupTable::lookup(int32_t angle_num,
-                                                int32_t tang_pos_num) {
+DetectorPair LookupTable::lookup(int32_t angle_num, int32_t tang_pos_num,
+                                 int32_t sino_num) {
   assert(angle_num >= 0 && "Angle number must be positive");
   assert(angle_num <= 251 && "Maximum angle number is 251");
   assert(tang_pos_num >= min_tang_pos_num &&
          "Minimum tangential number is -171");
   assert(tang_pos_num <= max_tang_pos_num &&
          "Maximum tangential number is 171");
+  assert(sino_num < 837 && "Maximum index of sinogram is 836");
 
   int32_t tang_pos_idx = tang_pos_to_table_idx(tang_pos_num);
-  auto pos_in_ring = transaxial_table->at(angle_num).at(tang_pos_idx);
-  return pos_in_ring;
+  std::pair<int32_t, int32_t> positions_in_ring =
+      transaxial_table->at(angle_num).at(tang_pos_idx);
+
+  int32_t ring_difference = ring_differences.at(sino_num);
+  int32_t axial_position = axial_positions.at(sino_num);
+
+  Detector detector1(positions_in_ring.first,
+                     axial_position - (ring_difference / 2));
+  Detector detector2(positions_in_ring.second,
+                     axial_position + (ring_difference / 2));
+
+  return DetectorPair(detector1, detector2);
 };
 
 void LookupTable::initialize_tables() {

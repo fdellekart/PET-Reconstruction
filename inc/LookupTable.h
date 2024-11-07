@@ -19,11 +19,11 @@ public:
 
 class DetectorPair {
 public:
-  DetectorPair()
-      : first(std::make_shared<Detector>()),
-        second(std::make_shared<Detector>()) {}
-  std::shared_ptr<Detector> first;
-  std::shared_ptr<Detector> second;
+  DetectorPair() : first(), second() {};
+  DetectorPair(Detector first, Detector second)
+      : first(first), second(second) {};
+  Detector first;
+  Detector second;
 };
 
 /// @brief Lookuptable to transform a LOR identified by angle
@@ -38,7 +38,8 @@ public:
   /// @param angle_num Projection view number, 0 to 252
   /// @param tang_pos_num Tangential position number, -251 to 252
   /// @return Reference to struct describing the detector pair
-  std::pair<int32_t, int32_t> lookup(int32_t angle_num, int32_t tang_pos_num);
+  DetectorPair lookup(int32_t angle_num, int32_t tang_pos_num,
+                      int32_t sino_num);
 
 private:
   // TODO: Is NSBINS really correct here?
