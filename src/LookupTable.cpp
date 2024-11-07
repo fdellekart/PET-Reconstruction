@@ -29,7 +29,7 @@ std::pair<int32_t, int32_t> LookupTable::lookup(int32_t angle_num,
 };
 
 void LookupTable::initialize_tables() {
-  fill_segment_offsets();
+  fill_ring_differences();
   fill_transaxial_table();
 };
 
@@ -53,8 +53,8 @@ void LookupTable::fill_transaxial_table() {
   };
 };
 
-void LookupTable::fill_segment_offsets() {
-  auto start = segment_offsets.begin();
+void LookupTable::fill_ring_differences() {
+  auto start = ring_differences.begin();
   std::ranges::fill(start, start + 127, 0);
   start = start + 127;
 
@@ -88,5 +88,7 @@ void LookupTable::fill_segment_offsets() {
   std::for_each_n(start, 54, assign_if_index_odd<-5>);
   assignment_index = 0;
 
+  std::for_each(ring_differences.begin(), ring_differences.end(),
+                [](auto &elem) { elem *= SPAN + 1; });
   std::cout << "Filling segment table finished" << std::endl;
 };

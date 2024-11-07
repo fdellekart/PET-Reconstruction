@@ -62,7 +62,7 @@ private:
 
   /// @brief: Fill segment offsets array with differences between ring pairs
   /// TODO: The things inside this should be looped somehow and not repeated
-  void fill_segment_offsets();
+  void fill_ring_differences();
 
   void fill_transaxial_table();
 
@@ -77,8 +77,7 @@ private:
   // Segments are labeled according to their ring difference
   // Zeros are direct Sinograms and for the rest the number
   // identifies how far they are tilted and the sign the direction
-  // Looks as: 0, 1, -1, 2, -2, ....
-  std::array<int32_t, NSINOS> segment_offsets;
+  std::array<int32_t, NSINOS> ring_differences;
 
   // Maximum tangential position number
   const int32_t min_tang_pos_num = -(NSBINS / 2 - 1);
