@@ -31,6 +31,7 @@ std::pair<int32_t, int32_t> LookupTable::lookup(int32_t angle_num,
 void LookupTable::initialize_tables() {
   fill_ring_differences();
   fill_transaxial_table();
+  fill_axial_positions();
 };
 
 void LookupTable::fill_transaxial_table() {
@@ -91,4 +92,39 @@ void LookupTable::fill_ring_differences() {
   std::for_each(ring_differences.begin(), ring_differences.end(),
                 [](auto &elem) { elem *= SPAN + 1; });
   std::cout << "Filling segment table finished" << std::endl;
+};
+
+void assign_ring_positions(int32_t *range, const int32_t n,
+                           const int start_ring_idx) {
+  for (int i = 0; i < n; i += 2) {
+    *(range + i) = start_ring_idx + i / 2;
+    *(range + i + 1) = start_ring_idx + i / 2;
+  }
+};
+
+void LookupTable::fill_axial_positions() {
+  int ring_idx = 0;
+
+  auto start = axial_positions.begin();
+  std::for_each(start, start + 127, [&ring_idx](auto &elem) {
+    elem = ring_idx;
+    ring_idx++;
+  });
+  start += 127;
+  ring_idx = 6;
+  assign_ring_positions(start, 230, ring_idx);
+  start += 230;
+  ring_idx += 11;
+  assign_ring_positions(start, 186, ring_idx);
+  start += 186;
+  ring_idx += 11;
+  assign_ring_positions(start, 142, ring_idx);
+  start += 142;
+  ring_idx += 11;
+  assign_ring_positions(start, 98, ring_idx);
+  start += 98;
+  ring_idx += 11;
+  assign_ring_positions(start, 54, ring_idx);
+
+  std::cout << "Filling axial positions finished" << std::endl;
 };

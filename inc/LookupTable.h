@@ -64,12 +64,14 @@ private:
   /// TODO: The things inside this should be looped somehow and not repeated
   void fill_ring_differences();
 
+  void fill_axial_positions();
+
   void fill_transaxial_table();
 
   // Number of detectors per ring
   const int32_t det_per_ring = DETECTORS_PER_RING;
 
-  std::array<int32_t, NSINOS> segment_table;
+  std::array<int32_t, NSINOS> axial_positions;
 
   // Maximum segment number identifying sinogram for span 1
   const int32_t max_segment_num = NSINOS - 1;
