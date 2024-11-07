@@ -7,14 +7,15 @@
 
 class Detector {
 public:
-  Detector() : idx(0), ring_idx(0) {};
-  Detector(int32_t idx, int32_t ring_idx) : idx(idx), ring_idx(ring_idx) {};
+  Detector() : tangential_idx(0), axial_idx(0) {};
+  Detector(int32_t tangential_idx, int32_t axial_idx)
+      : tangential_idx(tangential_idx), axial_idx(axial_idx) {};
 
   // Index in ring, 0 to 503
-  int32_t idx;
+  int32_t tangential_idx;
 
   // Index of ring, 0 to 64
-  int32_t ring_idx;
+  int32_t axial_idx;
 };
 
 class DetectorPair {
