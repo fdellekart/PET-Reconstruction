@@ -60,6 +60,12 @@ private:
   // Fill the table array with values
   void initialize_tables();
 
+  /// @brief: Fill segment offsets array with differences between ring pairs
+  /// TODO: The things inside this should be looped somehow and not repeated
+  void fill_segment_offsets();
+
+  void fill_transaxial_table();
+
   // Number of detectors per ring
   const int32_t det_per_ring = DETECTORS_PER_RING;
 
