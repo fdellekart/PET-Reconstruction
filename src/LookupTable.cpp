@@ -1,8 +1,11 @@
 #include "LookupTable.h"
 #include "Constants.h"
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <format>
+
+static size_t index = 0;
 
 int32_t LookupTable::table_idx_to_tang_pos(int32_t table_idx) {
   return table_idx - (NSBINS / 2) + 1;
@@ -26,6 +29,16 @@ std::pair<int32_t, int32_t> LookupTable::lookup(int32_t angle_num,
   return pos_in_ring;
 };
 
+template <int VALUE> void assign_if_index_odd(int32_t &element) {
+  if (index % 2 != 0)
+    element = VALUE;
+}
+
+template <int VALUE> void assign_if_index_even(int32_t &element) {
+  if (index % 2 == 0)
+    element = VALUE;
+}
+
 void LookupTable::initialize_tables() {
   std::pair<int32_t, int32_t> idxs_in_ring;
 
@@ -45,9 +58,40 @@ void LookupTable::initialize_tables() {
     };
   };
 
-  segment_offsets[0] = 0;
-  for (int segment_num = 1; segment_num <= max_segment_num; ++segment_num) {
-    segment_offsets[2 * segment_num - 1] = -segment_num;
-    segment_offsets[2 * segment_num] = segment_num;
-  };
+  auto start = segment_offsets.begin();
+  std::ranges::fill(start, start + 127, 0);
+  start = start + 127;
+
+  index = 0;
+  std::for_each_n(start, 230, assign_if_index_even<1>);
+  index = 0;
+  std::for_each_n(start, 230, assign_if_index_odd<-1>);
+  start = start + 230;
+  index = 0;
+
+  std::for_each_n(start, 186, assign_if_index_even<2>);
+  index = 0;
+  std::for_each_n(start, 186, assign_if_index_odd<-2>);
+  start = start + 186;
+  index = 0;
+
+  std::for_each_n(start, 142, assign_if_index_even<3>);
+  index = 0;
+  std::for_each_n(start, 142, assign_if_index_odd<-3>);
+  start = start + 142;
+  index = 0;
+
+  std::for_each_n(start, 98, assign_if_index_even<4>);
+  index = 0;
+  std::for_each_n(start, 98, assign_if_index_odd<-4>);
+  start = start + 98;
+  index = 0;
+
+  std::for_each_n(start, 54, assign_if_index_even<5>);
+  index = 0;
+  std::for_each_n(start, 54, assign_if_index_odd<-5>);
+  start = start + 54;
+  index = 0;
+
+  std::cout << "Filling segment table finished" << std::endl;
 };
