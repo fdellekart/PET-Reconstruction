@@ -10,6 +10,10 @@ struct FrameResult {
 int main(int argc, char **argv) {
   auto filename = "/home/florian/Documents/Programming/MMR2PETSIRD/data/LM/"
                   "17598013_1946_20150604155500.000000.bf";
+
+  auto outfile =
+      "/home/florian/Documents/Programming/MMR2PETSIRD/events_per_frame.csv";
+
   PETLINKStream input_stream(filename);
 
   if (!input_stream.good()) {
@@ -22,7 +26,7 @@ int main(int argc, char **argv) {
   int current_frame = 0;
 
   std::vector<FrameResult> results;
-  results.resize(106);
+  results.resize(700);
 
   for (std::shared_ptr<EventOrTag> next : input_stream) {
     if (next->tag.is_timetag) {
@@ -45,5 +49,17 @@ int main(int argc, char **argv) {
       delayeds++;
     }
   }
+
+  std::ofstream result_file(outfile);
+  result_file << "frame, prompts, delayeds" << "\n";
+  current_frame = 0;
+
+  for (FrameResult result : results) {
+    result_file << current_frame << "," << result.n_prompts << ","
+                << result.n_delayeds << "\n";
+    current_frame++;
+  }
+
+  result_file.close();
   return 0;
 }
