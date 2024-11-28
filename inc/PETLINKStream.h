@@ -2,8 +2,6 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <memory>
-#include <variant>
 
 #define PETLINK_STREAM_BUFFER_SIZE 10000000000 // 10 GB
 
@@ -36,14 +34,8 @@ public:
 /// Can have either tag or event set but not both
 struct EventOrTag {
   bool is_event;
-  std::unique_ptr<Event> event;
-  std::unique_ptr<Tag> tag;
-
-public:
-  EventOrTag() = default;
-  EventOrTag(const EventOrTag &) = delete;
-  EventOrTag &operator=(const EventOrTag &) = delete;
-  ~EventOrTag() = default;
+  Event event;
+  Tag tag;
 };
 
 /// @brief Input filestream to read listmode files in 32 bit PETLINK format
@@ -99,29 +91,9 @@ public:
   /// @return Tag or event, depending on what the next 32 bits represent
   std::shared_ptr<EventOrTag> get_next();
 
-  /// @brief Set the current position of the stream to a specific point in time
-  /// @param time milliseconds since start
-  /// @return bool indicating success
-  ///
-  /// Implements a binary search to find the relevant timetag
-  /// because the exact position of the desired time cannot be known
-  ///
-  /// Stream will be positioned such that the returned element on the get_next
-  /// call Is the requested timetag
-  ///
-  /// CAUTION: FIXME: Currently wouldn't work with a file that has a timetag for
-  /// 0 ms or if the inidividual timetags are not exactly 1 ms apart.
-  bool seek_time(int32_t time);
-
 protected:
   const char *listmode_file;
 
 private:
   uint32_t current_word;
-
-  /// @brief Call get next until next timetag is encountered
-  /// @return Time since start in milliseconds
-  ///
-  /// Resets the stream so that the next get_next call returns that timetag
-  uint32_t get_next_time();
 };
