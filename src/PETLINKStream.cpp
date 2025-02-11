@@ -1,4 +1,5 @@
 #include "PETLINKStream.h"
+#include "Constants.h"
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -75,6 +76,18 @@ Event::Event(uint32_t word) : word(word) {
   is_prompt = static_cast<bool>(word >> 30);
   is_delayed = !is_prompt;
   bin_address = word & 0x1ffffff;
+};
+
+LOR Event::get_pos() {
+  LOR idxs;
+
+  idxs.tang_idx = bin_address % NSBINS;
+  int32_t rest = bin_address / NSBINS;
+  idxs.angle_idx = rest % NSANGLES; // view num
+  rest = rest / NSANGLES;
+  idxs.proj_idx = rest % NSINOS;
+
+  return idxs;
 };
 
 Tag::Tag(uint32_t word) : word(word) {

@@ -34,14 +34,14 @@ int main(int argc, char **argv) {
   int32_t angle_num;
   int32_t sino_num;
 
-  for (std::shared_ptr<EventOrTag> next : input_stream) {
-    if (next->is_event) {
-      bin_address = next->event->bin_address;
-      tang_pos_num = bin_address % NSBINS;
-      rest = bin_address / NSBINS;
-      angle_num = rest % NSANGLES; // view num
-      rest = rest / NSANGLES;
-      sino_num = rest % NSINOS;
+  Sinogram<252, 344> sinogram;
+
+  for (EventOrTag next : input_stream) {
+    if (next.is_event) {
+      lor = next.event.get_lor();
+      if (next.event.is_prompt & lor.proj_idx == 30) {
+        sinogram.add_event(lor.angle_idx, lor.tang_idx);
+      };
     } else {
       if (next->tag->is_timetag) {
         log << "Time, " << next->tag->elapsed_millis << ","

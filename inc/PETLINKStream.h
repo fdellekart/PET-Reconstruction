@@ -7,6 +7,14 @@
 
 #define PETLINK_STREAM_BUFFER_SIZE 10000000000 // 10 GB
 
+/// @brief Description of a LOR as tangential, angular and projection indexes
+struct LOR {
+public:
+  int32_t tang_idx;
+  int32_t angle_idx;
+  int32_t proj_idx;
+};
+
 /// @brief Coincidence Event
 /// Can be either a prompt or delayed event
 /// Position is indicated via the bin_address TODO: find out how this relates to
@@ -19,6 +27,8 @@ public:
   bool is_prompt;
   bool is_delayed;
   uint32_t bin_address;
+
+  LOR get_pos();
 };
 
 /// @brief Tags store different metadata within the stream
