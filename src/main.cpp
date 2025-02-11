@@ -1,6 +1,7 @@
 #include "Constants.h"
 #include "DataSummary.h"
 #include "PETLINKStream.h"
+#include "Sinogram.h"
 #include <cassert>
 #include <cstdint>
 #include <fstream>
@@ -18,21 +19,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  std::ofstream log;
-  log.open("/home/florian/Documents/Programming/MMR2PETSIRD/log.csv");
-  log << "Type, Value\n";
-
   int printed_time = 0;
-
   int time_from_start = 0; // Time since acquisition start in seconds
-  DataSummary summary;
-  int last_val = 0;
 
-  int32_t bin_address;
-  int32_t tang_pos_num;
-  int32_t rest;
-  int32_t angle_num;
-  int32_t sino_num;
+  LOR lor;
 
   Sinogram<252, 344> sinogram;
 
@@ -43,25 +33,16 @@ int main(int argc, char **argv) {
         sinogram.add_event(lor.angle_idx, lor.tang_idx);
       };
     } else {
-      if (next->tag->is_timetag) {
-        log << "Time, " << next->tag->elapsed_millis << ","
-            << input_stream.tellg() << "\n";
-        summary.n_timetags++;
-        time_from_start = next->tag->elapsed_millis / ITIME;
-        last_val = next->tag->elapsed_millis;
+      if (next.tag.is_timetag) {
+        time_from_start = next.tag.elapsed_millis / ITIME;
+
+        if (time_from_start > 1000) {
+          sinogram.to_file(
+              "/home/florian/Documents/Programming/MMR2PETSIRD/sinogram");
+          exit(0);
+        }
       }
     }
-
-    summary.tot_entries++;
-
-    if (printed_time != time_from_start && ((time_from_start % 1000) == 0)) {
-      std::cout << "-------------------------------------\n";
-      std::cout << "Time: " << time_from_start << "\n";
-      std::cout << "Tangential: " << tang_pos_num << "\n";
-      std::cout << "Angle: " << angle_num << "\n";
-      std::cout << "Sino: " << sino_num << std::endl;
-    }
   }
-  log.close();
   return 0;
 }

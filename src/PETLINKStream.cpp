@@ -15,15 +15,15 @@ PETLINKStream::PETLINKStream(const char *listmode_file)
 
 PETLINKStream::~PETLINKStream() { close(); };
 
-std::shared_ptr<EventOrTag> PETLINKStream::get_next() {
+EventOrTag PETLINKStream::get_next() {
   read(reinterpret_cast<char *>(&current_word), sizeof(current_word));
-  std::shared_ptr<EventOrTag> result = std::make_shared<EventOrTag>();
+  EventOrTag result;
   if (current_word >> 31) {
-    result->is_event = false;
-    result->tag = std::make_unique<Tag>(current_word);
+    result.is_event = false;
+    result.tag = Tag(current_word);
   } else {
-    result->is_event = true;
-    result->event = std::make_unique<Event>(current_word);
+    result.is_event = true;
+    result.event = Event(current_word);
   }
   return result;
 };
@@ -60,8 +60,8 @@ uint32_t PETLINKStream::get_next_time() {
   uint32_t time = 0;
   while (!time && !this->eof()) {
     auto next = this->get_next();
-    if (!next->is_event && next->tag->is_timetag)
-      time = next->tag->elapsed_millis;
+    if (!next.is_event && next.tag.is_timetag)
+      time = next.tag.elapsed_millis;
     if (this->eof()) {
       throw std::runtime_error("Encountered EOF in PETLINK binary search. This "
                                "shouldn't be possible");
@@ -78,11 +78,12 @@ Event::Event(uint32_t word) : word(word) {
   bin_address = word & 0x1ffffff;
 };
 
-LOR Event::get_pos() {
+LOR Event::get_lor() {
   LOR idxs;
+  int32_t rest;
 
   idxs.tang_idx = bin_address % NSBINS;
-  int32_t rest = bin_address / NSBINS;
+  rest = bin_address / NSBINS;
   idxs.angle_idx = rest % NSANGLES; // view num
   rest = rest / NSANGLES;
   idxs.proj_idx = rest % NSINOS;

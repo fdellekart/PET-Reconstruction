@@ -41,39 +41,39 @@ private:
 TEST_F(PETLINKStreamTest, TestGetNext) {
   ASSERT_TRUE(stream.good());
 
-  std::shared_ptr<EventOrTag> element;
+  EventOrTag element;
 
   element = stream.get_next();
-  ASSERT_FALSE(element->is_event);
-  EXPECT_TRUE(element->tag->is_timetag);
-  EXPECT_EQ(element->tag->elapsed_millis, 1);
+  ASSERT_FALSE(element.is_event);
+  EXPECT_TRUE(element.tag.is_timetag);
+  EXPECT_EQ(element.tag.elapsed_millis, 1);
 
   element = stream.get_next();
-  ASSERT_TRUE(element->is_event);
-  EXPECT_TRUE(element->event->is_prompt);
-  EXPECT_FALSE(element->event->is_delayed);
-  EXPECT_EQ(element->event->bin_address, 1);
+  ASSERT_TRUE(element.is_event);
+  EXPECT_TRUE(element.event.is_prompt);
+  EXPECT_FALSE(element.event.is_delayed);
+  EXPECT_EQ(element.event.bin_address, 1);
 
   element = stream.get_next();
-  ASSERT_TRUE(element->is_event);
-  EXPECT_TRUE(element->event->is_delayed);
-  EXPECT_FALSE(element->event->is_prompt);
-  EXPECT_EQ(element->event->bin_address, 1);
+  ASSERT_TRUE(element.is_event);
+  EXPECT_TRUE(element.event.is_delayed);
+  EXPECT_FALSE(element.event.is_prompt);
+  EXPECT_EQ(element.event.bin_address, 1);
 }
 
 // Test if seek_time moves the stream to the proper timepoint
 TEST_F(PETLINKStreamTest, TestSeekTime) {
   stream.seek_time(50);
   auto element = stream.get_next();
-  EXPECT_FALSE(element->is_event);
-  EXPECT_TRUE(element->tag->is_timetag);
-  EXPECT_EQ(element->tag->elapsed_millis, 50);
+  EXPECT_FALSE(element.is_event);
+  EXPECT_TRUE(element.tag.is_timetag);
+  EXPECT_EQ(element.tag.elapsed_millis, 50);
 
   stream.seek_time(73);
   element = stream.get_next();
-  EXPECT_FALSE(element->is_event);
-  EXPECT_TRUE(element->tag->is_timetag);
-  EXPECT_EQ(element->tag->elapsed_millis, 73);
+  EXPECT_FALSE(element.is_event);
+  EXPECT_TRUE(element.tag.is_timetag);
+  EXPECT_EQ(element.tag.elapsed_millis, 73);
 }
 
 // Test if the iterator works properly
@@ -83,12 +83,12 @@ TEST_F(PETLINKStreamTest, TestSeekTime) {
 // This could fail unintended if two identical events
 // are put after each other in the stream fixture
 TEST_F(PETLINKStreamTest, TestIterator) {
-  auto last = std::make_shared<EventOrTag>();
+  EventOrTag last;
   bool is_first_iter = true;
 
-  for (std::shared_ptr<EventOrTag> element : stream) {
+  for (EventOrTag element : stream) {
     if (!is_first_iter) {
-      ASSERT_NE(last->event->word, element->event->word);
+      ASSERT_NE(last.event.word, element.event.word);
     }
     last = element;
     is_first_iter = false;

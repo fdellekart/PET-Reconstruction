@@ -28,7 +28,7 @@ public:
   bool is_delayed;
   uint32_t bin_address;
 
-  LOR get_pos();
+  LOR get_lor();
 };
 
 /// @brief Tags store different metadata within the stream
@@ -46,14 +46,11 @@ public:
 /// Can have either tag or event set but not both
 struct EventOrTag {
   bool is_event;
-  std::unique_ptr<Event> event;
-  std::unique_ptr<Tag> tag;
+  Event event;
+  Tag tag;
 
 public:
   EventOrTag() = default;
-  EventOrTag(const EventOrTag &) = delete;
-  EventOrTag &operator=(const EventOrTag &) = delete;
-  ~EventOrTag() = default;
 };
 
 /// @brief Input filestream to read listmode files in 32 bit PETLINK format
@@ -67,7 +64,7 @@ public:
 
   struct iterator {
     PETLINKStream *stream;
-    std::shared_ptr<EventOrTag> current_element;
+    EventOrTag current_element;
 
   public:
     iterator(PETLINKStream *s = nullptr, bool is_end = false) : stream(s) {
@@ -79,7 +76,7 @@ public:
         stream = nullptr;
       }
     }
-    std::shared_ptr<EventOrTag> operator*() const { return current_element; };
+    EventOrTag operator*() const { return current_element; };
     iterator &operator++() {
       if (stream) {
         current_element = stream->get_next();
@@ -107,7 +104,7 @@ public:
 
   /// @brief Get the next element in the stream
   /// @return Tag or event, depending on what the next 32 bits represent
-  std::shared_ptr<EventOrTag> get_next();
+  EventOrTag get_next();
 
   /// @brief Set the current position of the stream to a specific point in time
   /// @param time milliseconds since start
