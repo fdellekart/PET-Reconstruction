@@ -1,4 +1,6 @@
+#include <fstream>
 #include <stdexcept>
+#include <string>
 
 template <int NANGLES, int NTANG> class Sinogram {
 public:
@@ -12,6 +14,26 @@ public:
   int get_bin(int angle_idx, int tang_idx) {
     check_range(angle_idx, tang_idx);
     return data[angle_idx][tang_idx];
+  };
+
+  void to_file(const std::string &filepath) {
+    std::ofstream outstream(filepath);
+
+    if (!outstream) {
+      throw std::runtime_error("Could not open file");
+    };
+
+    for (int i = 0; i < NANGLES; i++) {
+      for (int j = 0; j < NTANG; j++) {
+        outstream << data[i][j];
+        if (j != NTANG - 1) {
+          outstream << ",";
+        }
+      }
+      outstream << std::endl;
+    }
+
+    outstream.close();
   };
 
 private:
