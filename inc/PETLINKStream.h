@@ -28,6 +28,7 @@ public:
   bool is_delayed;
   uint32_t bin_address;
 
+  /// @brief Get the LOR the event corresponds to
   LOR get_lor();
 };
 

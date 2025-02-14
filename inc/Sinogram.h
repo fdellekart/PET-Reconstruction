@@ -2,20 +2,28 @@
 #include <stdexcept>
 #include <string>
 
+/// @brief Representation of one projection
+/// @tparam NANGLES Number of angular divisions in the scanner
+/// @tparam NTANG Number of possible tangential positions
 template <int NANGLES, int NTANG> class Sinogram {
 public:
   Sinogram() = default;
 
+  /// @brief Increment the specified bin by one
   void add_event(int angle_idx, int tang_idx) {
     check_range(angle_idx, tang_idx);
     (data[angle_idx][tang_idx])++;
   };
 
+  /// @brief Get the number of events for a bin
   int get_bin(int angle_idx, int tang_idx) {
     check_range(angle_idx, tang_idx);
     return data[angle_idx][tang_idx];
   };
 
+  /// @brief Write out the sinogram to a file
+  /// one angle per line, tangential indexes separated by commas
+  /// @param filepath Absolute path to write to
   void to_file(const std::string &filepath) {
     std::ofstream outstream(filepath);
 
@@ -39,6 +47,7 @@ public:
 private:
   int data[NANGLES][NTANG] = {0};
 
+  /// @brief Check if indexes are in range or throw out_of_range
   void check_range(int angle_idx, int tang_idx) {
     if (angle_idx >= NANGLES) {
       throw std::out_of_range(
