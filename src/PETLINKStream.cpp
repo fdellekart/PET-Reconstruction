@@ -75,7 +75,7 @@ Event::Event(uint32_t word) : word(word) {
   assert(!(word >> 31));
   is_prompt = static_cast<bool>(word >> 30);
   is_delayed = !is_prompt;
-  bin_address = word & 0x1ffffff;
+  bin_address = word & 0x3fffffff;
 };
 
 LOR Event::get_lor() {
