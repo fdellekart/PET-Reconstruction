@@ -94,3 +94,44 @@ TEST_F(PETLINKStreamTest, TestIterator) {
     is_first_iter = false;
   }
 }
+
+// Test if the bin_address is properly transformed
+// into angular, tangential and projection indexes
+TEST(EventTest, TestPositionParse) {
+  // Setup
+  Event event;
+  LOR lor;
+  int32_t bin_address;
+
+  bin_address = 0;
+  event = Event(0b01000000000000000000000000000000 | bin_address);
+  lor = event.get_lor();
+
+  EXPECT_EQ(lor.angle_idx, 0);
+  EXPECT_EQ(lor.tang_idx, 0);
+  EXPECT_EQ(lor.proj_idx, 0);
+
+  bin_address = 251;
+  event = Event(0b01000000000000000000000000000000 | bin_address);
+  lor = event.get_lor();
+
+  EXPECT_EQ(lor.angle_idx, 0);
+  EXPECT_EQ(lor.tang_idx, 251);
+  EXPECT_EQ(lor.proj_idx, 0);
+
+  bin_address = 5201530; // 60 * (344 * 252) + 250
+  event = Event(0b01000000000000000000000000000000 | bin_address);
+  lor = event.get_lor();
+
+  EXPECT_EQ(lor.angle_idx, 0);
+  EXPECT_EQ(lor.tang_idx, 250);
+  EXPECT_EQ(lor.proj_idx, 60);
+
+  bin_address = 5201874; // 60 * (344 * 252) + 250 + 344
+  event = Event(0b01000000000000000000000000000000 | bin_address);
+  lor = event.get_lor();
+
+  EXPECT_EQ(lor.angle_idx, 1);
+  EXPECT_EQ(lor.tang_idx, 250);
+  EXPECT_EQ(lor.proj_idx, 60);
+}
