@@ -14,7 +14,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
-add_executable(tests tests/test_petlinkstream.cpp src/PETLINKStream.cpp tests/test_lookuptable.cpp src/LookupTable.cpp tests/test_sinogram.cpp src/Sinogram.cpp)
+add_executable(tests tests/test_petlinkstream.cpp src/PETLINKStream.cpp tests/test_lookuptable.cpp src/LookupTable.cpp tests/test_sinogram.cpp src/Sinogram.cpp tests/test_raytracer.cpp)
 target_include_directories(tests PRIVATE inc)
 target_link_libraries(tests GTest::gtest_main)
 include(GoogleTest)

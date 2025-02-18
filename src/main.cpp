@@ -1,6 +1,7 @@
 #include "Constants.h"
 #include "DataSummary.h"
 #include "PETLINKStream.h"
+#include "RayTracer.h"
 #include "Sinogram.h"
 #include <cassert>
 #include <cstdint>
@@ -9,40 +10,19 @@
 #include <memory>
 
 int main(int argc, char **argv) {
-  auto filename = "/home/florian/Documents/Programming/MMR2PETSIRD/data/LM/"
-                  "17598013_1946_20150604155500.000000.bf";
-  PETLINKStream input_stream(filename);
-  input_stream.seek_time(600);
+  Vec2 p1 = {-1.6, 4.5};
+  Vec2 p2 = {7.8, 0.4};
 
-  if (!input_stream.good()) {
-    std::cerr << "File '" << filename << "' not found.";
-    exit(EXIT_FAILURE);
+  int Nx = 6, Ny = 5;        // Grid size
+  double dx = 1.0, dy = 1.0; // Voxel size
+  double x0 = 0.0, y0 = 0.0; // Grid origin
+
+  auto hits = siddon_ray_tracing(p1, p2, Nx, Ny, dx, dy, x0, y0);
+
+  for (const auto &hit : hits) {
+    std::cout << "Voxel (" << hit.i << ", " << hit.j
+              << ") Length: " << hit.length << "\n";
   }
 
-  int printed_time = 0;
-  int time_from_start = 0; // Time since acquisition start in seconds
-
-  LOR lor;
-
-  Sinogram<252, 344> sinogram;
-
-  for (EventOrTag next : input_stream) {
-    if (next.is_event) {
-      lor = next.event.get_lor();
-      if (next.event.is_prompt & lor.proj_idx == 30) {
-        sinogram.add_event(lor.angle_idx, lor.tang_idx);
-      };
-    } else {
-      if (next.tag.is_timetag) {
-        time_from_start = next.tag.elapsed_millis / ITIME;
-
-        if (time_from_start > 1000) {
-          sinogram.to_file(
-              "/home/florian/Documents/Programming/MMR2PETSIRD/sinogram");
-          exit(0);
-        }
-      }
-    }
-  }
   return 0;
 }
