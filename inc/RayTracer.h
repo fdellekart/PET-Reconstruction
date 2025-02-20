@@ -11,10 +11,10 @@ struct VoxelHit {
 };
 
 // Siddon's algorithm to compute path lengths in voxels
-std::vector<VoxelHit> siddon_ray_tracing(const Vec2 &ray_start,
-                                         const Vec2 &ray_end, int Nx, int Ny,
-                                         double dx, double dy, double x0,
-                                         double y0) {
+std::vector<VoxelHit> siddon_ray_tracing(const Vec2<double> &ray_start,
+                                         const Vec2<double> &ray_end, int Nx,
+                                         int Ny, double dx, double dy,
+                                         double x0, double y0) {
   std::vector<VoxelHit> hits;
 
   Nx++;
@@ -106,8 +106,7 @@ public:
   /// @param voxel_size Voxel sizes for each direction
   /// @param origin Origin of the coordinate system relative to lower left image
   /// corner
-  RayTracer(Vec2 img_dimension, Vec2 voxel_size, Vec2 origin)
-      : img_dimension(img_dimension), voxel_size(voxel_size), origin(origin) {};
+  RayTracer(ScannerGeometry geometry) : geometry(geometry) {};
 
   /// @brief Trace the line connecting the points through the image
   /// @param ray_start Start point of line
@@ -118,14 +117,14 @@ public:
   /// FIXME: Currently sometimes includes voxels outside the image with
   ///        a length of 0.
   /// TODO: Adapting to 0-based indexing could be good
-  std::vector<VoxelHit> trace(const Vec2 &ray_start, const Vec2 &ray_end) {
-    return siddon_ray_tracing(ray_start, ray_end, img_dimension.x,
-                              img_dimension.y, voxel_size.x, voxel_size.y,
-                              origin.x, origin.y);
+  std::vector<VoxelHit> trace(const Vec2<double> &ray_start,
+                              const Vec2<double> &ray_end) {
+    return siddon_ray_tracing(ray_start, ray_end, geometry.img_dimensions.x,
+                              geometry.img_dimensions.y, geometry.voxel_size.x,
+                              geometry.voxel_size.y, geometry.origin.x,
+                              geometry.origin.y);
   };
 
 private:
-  Vec2 img_dimension;
-  Vec2 voxel_size;
-  Vec2 origin;
+  ScannerGeometry geometry;
 };
