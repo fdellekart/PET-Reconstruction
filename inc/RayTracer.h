@@ -1,12 +1,9 @@
+#include "Geometry.h"
 #include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <vector>
-
-struct Vec2 {
-  double x, y;
-};
 
 struct VoxelHit {
   int i, j;      // Voxel indices
