@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -44,7 +45,27 @@ public:
     outstream.close();
   };
 
+  static Sinogram from_file(const std::string &filepath) {
+    Sinogram sinogram;
+    std::ifstream file(filepath);
+    std::string line;
+    std::string cell;
+
+    for (int i = 0; i < NANGLES; i++) {
+      std::getline(file, line);
+      std::stringstream linestream(line);
+      for (int j = 0; j < NTANG; j++) {
+        std::getline(linestream, cell, ',');
+        sinogram.data[i][j] = std::stoi(cell);
+      }
+    }
+
+    return sinogram;
+  };
+
 private:
+  Sinogram(int *data) : data(data) {};
+
   int data[NANGLES][NTANG] = {0};
 
   /// @brief Check if indexes are in range or throw out_of_range
