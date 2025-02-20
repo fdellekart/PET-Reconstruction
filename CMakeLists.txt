@@ -14,13 +14,13 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
-add_executable(tests tests/test_petlinkstream.cpp src/PETLINKStream.cpp tests/test_lookuptable.cpp src/LookupTable.cpp tests/test_sinogram.cpp src/Sinogram.cpp tests/test_raytracer.cpp)
+add_executable(tests tests/test_petlinkstream.cpp src/PETLINKStream.cpp tests/test_lookuptable.cpp src/LookupTable.cpp tests/test_sinogram.cpp src/Sinogram.cpp tests/test_raytracer.cpp src/Geometry.cpp tests/test_geometry.cpp)
 target_include_directories(tests PRIVATE inc)
 target_link_libraries(tests GTest::gtest_main)
 include(GoogleTest)
 gtest_discover_tests(tests PROPERTIES DISCOVERY_TIMEOUT 600)
 
-set(SOURCE_FILES src/main.cpp src/PETLINKStream.cpp src/LookupTable.cpp src/Sinogram.cpp)
+set(SOURCE_FILES src/main.cpp src/PETLINKStream.cpp src/LookupTable.cpp src/Sinogram.cpp src/Geometry.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE inc)
 

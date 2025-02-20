@@ -7,7 +7,7 @@
 /// Test a horizontal trace from left to right
 TEST(RayTracerTest, HorizontalTraceInLowestVoxel) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, {1, 1}, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 
@@ -38,7 +38,7 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxel) {
 /// Test a horizontal trace from right to left
 TEST(RayTracerTest, HorizontalTraceInLowestVoxelReverse) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, {1, 1}, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 
@@ -69,7 +69,7 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxelReverse) {
 /// Test a horizontal trace from bottom to top
 TEST(RayTracerTest, VerticalTraceInLeftVoxel) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, {1, 1}, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 
@@ -100,7 +100,7 @@ TEST(RayTracerTest, VerticalTraceInLeftVoxel) {
 /// Test a horizontal trace from top to bottom
 TEST(RayTracerTest, VerticalTraceInRightVoxelReverse) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, {1, 1}, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 

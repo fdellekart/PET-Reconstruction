@@ -120,8 +120,8 @@ public:
   std::vector<VoxelHit> trace(const Vec2<double> &ray_start,
                               const Vec2<double> &ray_end) {
     return siddon_ray_tracing(ray_start, ray_end, geometry.img_dimensions.x,
-                              geometry.img_dimensions.y, geometry.voxel_size.x,
-                              geometry.voxel_size.y, geometry.origin.x,
+                              geometry.img_dimensions.y, geometry.voxel_size,
+                              geometry.voxel_size, geometry.origin.x,
                               geometry.origin.y);
   };
 
