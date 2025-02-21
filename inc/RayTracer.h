@@ -28,12 +28,16 @@ std::vector<VoxelHit> siddon_ray_tracing(const Vec2<double> &ray_start,
     return (y0 + (j - 1) * dy - ray_start.y) / (ray_end.y - ray_start.y);
   };
 
-  double alpha_min =
-      std::max(std::max(0.0, std::min(get_alpha_x(1), get_alpha_x(Nx))),
-               std::min(get_alpha_y(1), get_alpha_y(Ny)));
-  double alpha_max =
-      std::min(std::min(1.0, std::max(get_alpha_x(1), get_alpha_x(Nx))),
-               std::max(get_alpha_y(1), get_alpha_y(Ny)));
+  double alpha_min = std::max(0.0, std::min(get_alpha_x(1), get_alpha_x(Nx)))
+                         ? ray_start.x != ray_end.x
+                         : 0.0;
+  alpha_min = std::max(alpha_min, std::min(get_alpha_y(1), get_alpha_y(Ny)))
+                  ? ray_start.y != ray_end.y
+                  : alpha_min;
+
+  double alpha_max = std::min(1.0, std::max(get_alpha_x(1), get_alpha_x(Nx)));
+  alpha_max = std::min(alpha_max, std::max(get_alpha_y(1), get_alpha_y(Ny)));
+
   assert(alpha_max > alpha_min); // The ray does not intersect the volume
 
   auto alpha_for_min = ray_end.x > ray_start.x ? alpha_min : alpha_max;
