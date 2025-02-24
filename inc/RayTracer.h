@@ -28,15 +28,20 @@ std::vector<VoxelHit> siddon_ray_tracing(const Vec2<double> &ray_start,
     return (y0 + (j - 1) * dy - ray_start.y) / (ray_end.y - ray_start.y);
   };
 
-  double alpha_min = std::max(0.0, std::min(get_alpha_x(1), get_alpha_x(Nx)))
-                         ? ray_start.x != ray_end.x
-                         : 0.0;
-  alpha_min = std::max(alpha_min, std::min(get_alpha_y(1), get_alpha_y(Ny)))
-                  ? ray_start.y != ray_end.y
-                  : alpha_min;
+  bool x_equal = std::abs(ray_end.x - ray_start.x) < 0.0001;
+  bool y_equal = std::abs(ray_end.y - ray_start.y) < 0.0001;
 
-  double alpha_max = std::min(1.0, std::max(get_alpha_x(1), get_alpha_x(Nx)));
-  alpha_max = std::min(alpha_max, std::max(get_alpha_y(1), get_alpha_y(Ny)));
+  double alpha_min =
+      !x_equal ? std::max(0.0, std::min(get_alpha_x(1), get_alpha_x(Nx))) : 0.0;
+  alpha_min =
+      !y_equal ? std::max(alpha_min, std::min(get_alpha_y(1), get_alpha_y(Ny)))
+               : alpha_min;
+
+  double alpha_max =
+      !x_equal ? std::min(1.0, std::max(get_alpha_x(1), get_alpha_x(Nx))) : 1.0;
+  alpha_max =
+      !y_equal ? std::min(alpha_max, std::max(get_alpha_y(1), get_alpha_y(Ny)))
+               : alpha_max;
 
   assert(alpha_max > alpha_min); // The ray does not intersect the volume
 
