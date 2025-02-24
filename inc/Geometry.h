@@ -21,6 +21,10 @@ struct ScannerGeometry {
 
   /// Detectors per ring
   int det_per_ring;
+
+  static ScannerGeometry mmr() {
+    return ScannerGeometry({344, 344}, 656.0 / 344, {0, 328}, 656.0, 504);
+  }
 };
 
 /// @brief Description of a LOR as tangential, angular and projection indexes
