@@ -11,21 +11,26 @@ struct VoxelHit {
 };
 
 // Siddon's algorithm to compute path lengths in voxels
-std::vector<VoxelHit> siddon_ray_tracing(const Vec2<double> &ray_start,
-                                         const Vec2<double> &ray_end, int Nx,
-                                         int Ny, double dx, double dy,
-                                         double x0, double y0) {
+std::vector<VoxelHit> siddon_ray_tracing(Vec2<double> ray_start,
+                                         Vec2<double> ray_end, int Nx, int Ny,
+                                         double dx, double dy, double x0,
+                                         double y0) {
   std::vector<VoxelHit> hits;
 
   Nx++;
   Ny++;
 
+  ray_start.x += x0;
+  ray_end.x += x0;
+  ray_start.y += y0;
+  ray_end.y += y0;
+
   auto get_alpha_x = [ray_start, ray_end, x0, dx](int i) {
-    return (x0 + (i - 1) * dx - ray_start.x) / (ray_end.x - ray_start.x);
+    return ((i - 1) * dx - ray_start.x) / (ray_end.x - ray_start.x);
   };
 
   auto get_alpha_y = [ray_start, ray_end, y0, dy](int j) {
-    return (y0 + (j - 1) * dy - ray_start.y) / (ray_end.y - ray_start.y);
+    return ((j - 1) * dy - ray_start.y) / (ray_end.y - ray_start.y);
   };
 
   bool x_equal = std::abs(ray_end.x - ray_start.x) < 0.0001;
@@ -48,20 +53,20 @@ std::vector<VoxelHit> siddon_ray_tracing(const Vec2<double> &ray_start,
   auto alpha_for_min = ray_end.x > ray_start.x ? alpha_min : alpha_max;
   auto alpha_for_max = ray_end.x > ray_start.x ? alpha_max : alpha_min;
 
-  int i_min = Nx - (x0 + dx * (Nx - 1) -
-                    alpha_for_min * (ray_end.x - ray_start.x) - ray_start.x) /
+  int i_min = Nx - (dx * (Nx - 1) - alpha_for_min * (ray_end.x - ray_start.x) -
+                    ray_start.x) /
                        dx;
   int i_max =
-      1 + (ray_start.x + alpha_for_max * (ray_end.x - ray_start.x) - x0) / dx;
+      1 + (ray_start.x + alpha_for_max * (ray_end.x - ray_start.x)) / dx;
 
   alpha_for_min = ray_end.y > ray_start.y ? alpha_min : alpha_max;
   alpha_for_max = ray_end.y > ray_start.y ? alpha_max : alpha_min;
 
-  int j_min = Ny - (y0 + dy * (Ny - 1) -
-                    alpha_for_min * (ray_end.y - ray_start.y) - ray_start.y) /
+  int j_min = Ny - (dy * (Ny - 1) - alpha_for_min * (ray_end.y - ray_start.y) -
+                    ray_start.y) /
                        dy;
   int j_max =
-      1 + (ray_start.y + alpha_for_max * (ray_end.y - ray_start.y) - y0) / dy;
+      1 + (ray_start.y + alpha_for_max * (ray_end.y - ray_start.y)) / dy;
 
   std::vector<double> alpha_x(std::abs(i_max - i_min));
   std::vector<double> alpha_y(std::abs(j_max - j_min));
@@ -94,16 +99,14 @@ std::vector<VoxelHit> siddon_ray_tracing(const Vec2<double> &ray_start,
              ++alphas.begin());
 
   for (int i = 0; i < n - 1; i++) {
-    hits.push_back(VoxelHit(
-        1 + (ray_start.x +
-             ((alphas[i + 1] + alphas[i]) / 2) * (ray_end.x - ray_start.x) -
-             x0) /
-                dx,
-        1 + (ray_start.y +
-             ((alphas[i + 1] + alphas[i]) / 2) * (ray_end.y - ray_start.y) -
-             y0) /
-                dy,
-        alphas[i + 1] - alphas[i]));
+    hits.push_back(
+        VoxelHit(1 + (ray_start.x + ((alphas[i + 1] + alphas[i]) / 2) *
+                                        (ray_end.x - ray_start.x)) /
+                         dx,
+                 1 + (ray_start.y + ((alphas[i + 1] + alphas[i]) / 2) *
+                                        (ray_end.y - ray_start.y)) /
+                         dy,
+                 alphas[i + 1] - alphas[i]));
   }
 
   return hits;

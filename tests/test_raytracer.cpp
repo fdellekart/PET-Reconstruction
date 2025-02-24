@@ -7,7 +7,7 @@
 /// Test a horizontal trace from left to right
 TEST(RayTracerTest, HorizontalTraceInLowestVoxel) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 
@@ -38,7 +38,7 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxel) {
 /// Test a horizontal trace from right to left
 TEST(RayTracerTest, HorizontalTraceInLowestVoxelReverse) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 
@@ -66,17 +66,17 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxelReverse) {
   EXPECT_EQ(std::size(result), 11); // TODO: Could be ten
 }
 
-/// Test a horizontal trace from bottom to top
+/// Test a vertical trace from bottom to top
 TEST(RayTracerTest, VerticalTraceInLeftVoxel) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 
   start.x = 0.5;
-  start.y = 0;
+  start.y = -5;
   end.x = 0.5;
-  end.y = 10;
+  end.y = 5;
 
   // Execute
   std::vector<VoxelHit> result = tracer.trace(start, end);
@@ -97,17 +97,17 @@ TEST(RayTracerTest, VerticalTraceInLeftVoxel) {
   EXPECT_EQ(std::size(result), 11); // TODO: Could be ten
 }
 
-/// Test a horizontal trace from top to bottom
+/// Test a vertical trace from top to bottom
 TEST(RayTracerTest, VerticalTraceInRightVoxelReverse) {
   // Setup 10x10 image with voxel size one and origin 0
-  ScannerGeometry geometry({10, 10}, 1, {0, 0}, 320.0, 504);
+  ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
   RayTracer tracer(geometry);
   Vec2<double> start, end;
 
   start.x = 9.5;
-  start.y = 10;
+  start.y = 5;
   end.x = 9.5;
-  end.y = 0;
+  end.y = -5;
 
   // Execute
   std::vector<VoxelHit> result = tracer.trace(start, end);
