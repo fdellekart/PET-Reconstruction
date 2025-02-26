@@ -11,7 +11,7 @@ LOR::get_det_positions(const ScannerGeometry &geometry) {
   double k = tan(angle);
 
   double d = -(geometry.detector_diameter / 2) / cos(angle) +
-             geometry.voxel_size * tang_idx / cos(angle);
+             geometry.voxel_size * (0.5 + tang_idx) / cos(angle);
 
   double p = (2 * k * d) / (1 + pow(k, 2));
   double q =

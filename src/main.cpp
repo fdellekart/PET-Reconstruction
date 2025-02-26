@@ -1,5 +1,6 @@
 #include "Constants.h"
 #include "DataSummary.h"
+#include "Image.h"
 #include "PETLINKStream.h"
 #include "RayTracer.h"
 #include "Sinogram.h"
@@ -10,19 +11,28 @@
 #include <memory>
 
 int main(int argc, char **argv) {
-  Vec2 p1 = {-1.6, 4.5};
-  Vec2 p2 = {7.8, 0.4};
+  Sinogram<252, 344> sinogram = Sinogram<252, 344>::from_file(
+      "/home/florian/Documents/Programming/MMR2PETSIRD/sinogram");
+  ScannerGeometry geometry = ScannerGeometry::mmr();
+  RayTracer tracer(geometry);
+  LOR lor;
+  Image<344, 344> image;
 
-  int Nx = 6, Ny = 5;        // Grid size
-  double dx = 1.0, dy = 1.0; // Voxel size
-  double x0 = 0.0, y0 = 0.0; // Grid origin
-
-  auto hits = siddon_ray_tracing(p1, p2, Nx, Ny, dx, dy, x0, y0);
-
-  for (const auto &hit : hits) {
-    std::cout << "Voxel (" << hit.i << ", " << hit.j
-              << ") Length: " << hit.length << "\n";
+  for (int ang_idx = 0; ang_idx < 252; ang_idx++) {
+    for (int tang_idx = 0; tang_idx < 344; tang_idx++) {
+      lor = LOR(tang_idx, ang_idx, 0);
+      auto det_pos = lor.get_det_positions(geometry);
+      auto trace = tracer.trace(det_pos.first, det_pos.second);
+      for (auto voxel_hit : trace) {
+        if (voxel_hit.i < 1 | voxel_hit.j < 1)
+          continue; // FIXME
+        image.data[voxel_hit.i - 1][voxel_hit.j - 1] +=
+            (voxel_hit.length * sinogram.get_bin(ang_idx, tang_idx));
+      }
+    }
   }
+
+  image.to_file("/home/florian/Documents/Programming/MMR2PETSIRD/image");
 
   return 0;
 }
