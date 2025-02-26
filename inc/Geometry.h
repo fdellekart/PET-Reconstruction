@@ -35,7 +35,8 @@ public:
   int32_t proj_idx;
 
   // Calculate the intersection points with the detector ring
-  std::pair<Vec2<double>, Vec2<double>> get_det_positions(ScannerGeometry &);
+  std::pair<Vec2<double>, Vec2<double>>
+  get_det_positions(const ScannerGeometry &);
 
   inline static LOR from_idxs(int32_t tang_idx, int32_t angle_idx,
                               int32_t proj_idx) {

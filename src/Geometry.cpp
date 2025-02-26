@@ -4,12 +4,14 @@
 #define M_PI 3.14159265358979323846
 
 std::pair<Vec2<double>, Vec2<double>>
-LOR::get_det_positions(ScannerGeometry &geometry) {
+LOR::get_det_positions(const ScannerGeometry &geometry) {
   std::pair<Vec2<double>, Vec2<double>> result;
 
-  double k = tan((2 * M_PI / (geometry.det_per_ring / 2)) * angle_idx);
-  double d = geometry.voxel_size * tang_idx + geometry.voxel_size / 2 -
-             geometry.detector_diameter / 2;
+  double angle = (M_PI / (geometry.det_per_ring / 2)) * angle_idx;
+  double k = tan(angle);
+
+  double d = -(geometry.detector_diameter / 2) / cos(angle) +
+             geometry.voxel_size * tang_idx / cos(angle);
 
   double p = (2 * k * d) / (1 + pow(k, 2));
   double q =
