@@ -24,8 +24,6 @@ int main(int argc, char **argv) {
       auto det_pos = lor.get_det_positions(geometry);
       auto trace = tracer.trace(det_pos.first, det_pos.second);
       for (auto voxel_hit : trace) {
-        if (voxel_hit.i < 1 | voxel_hit.j < 1)
-          continue; // FIXME
         image.data[voxel_hit.i - 1][voxel_hit.j - 1] +=
             (voxel_hit.length * sinogram.get_bin(ang_idx, tang_idx));
       }
