@@ -57,8 +57,8 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   int j_max = 1 + (ray_start.y + alpha_for_max * (ray_end.y - ray_start.y)) /
                       geometry.voxel_size;
 
-  std::vector<double> alpha_x(std::abs(i_max - i_min));
-  std::vector<double> alpha_y(std::abs(j_max - j_min));
+  alpha_x.resize(std::abs(i_max - i_min));
+  alpha_y.resize(std::abs(j_max - j_min));
 
   int start = i_min < i_max ? i_min : i_max;
   int end = i_min < i_max ? i_max : i_min;
@@ -81,7 +81,7 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   if (ray_start.y > ray_end.y)
     std::reverse(alpha_y.begin(), alpha_y.end());
 
-  std::vector<double> alphas(n);
+  alphas.resize(n);
   alphas[0] = alpha_min;
   alphas[n - 1] = alpha_max;
   std::merge(alpha_x.begin(), alpha_x.end(), alpha_y.begin(), alpha_y.end(),

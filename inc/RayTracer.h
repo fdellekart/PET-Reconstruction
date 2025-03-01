@@ -16,7 +16,11 @@ public:
   /// @param voxel_size Voxel sizes for each direction
   /// @param origin Origin of the coordinate system relative to lower left image
   /// corner
-  RayTracer(ScannerGeometry geometry) : geometry(geometry) {};
+  RayTracer(ScannerGeometry geometry) : geometry(geometry) {
+    alpha_x.reserve(geometry.img_dimensions.x);
+    alpha_y.reserve(geometry.img_dimensions.y);
+    alphas.reserve(geometry.img_dimensions.x + geometry.img_dimensions.x);
+  };
 
   /// @brief Trace the line connecting the points through the image
   /// @param ray_start Start point of line
@@ -31,4 +35,7 @@ public:
 
 private:
   ScannerGeometry geometry;
+  std::vector<double> alpha_x;
+  std::vector<double> alpha_y;
+  std::vector<double> alphas;
 };
