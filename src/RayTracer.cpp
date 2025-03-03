@@ -11,13 +11,13 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   ray_start.y += geometry.origin.y;
   ray_end.y += geometry.origin.y;
 
-  auto get_alpha_x = [ray_start, ray_end, this](int i) {
-    return ((i - 1) * this->geometry.voxel_size - ray_start.x) /
+  auto get_alpha_x = [&](int i) {
+    return ((i - 1) * geometry.voxel_size - ray_start.x) /
            (ray_end.x - ray_start.x);
   };
 
-  auto get_alpha_y = [ray_start, ray_end, this](int j) {
-    return ((j - 1) * this->geometry.voxel_size - ray_start.y) /
+  auto get_alpha_y = [&](int j) {
+    return ((j - 1) * geometry.voxel_size - ray_start.y) /
            (ray_end.y - ray_start.y);
   };
 
