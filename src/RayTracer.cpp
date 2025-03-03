@@ -1,7 +1,8 @@
 #include "RayTracer.h"
 
 std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
-                                       Vec2<double> ray_end) {
+                                       Vec2<double> ray_end,
+                                       const ScannerGeometry &geometry) {
   // Implementation of Siddon's algorithm
   auto Nx = geometry.img_dimensions.x + 1;
   auto Ny = geometry.img_dimensions.y + 1;

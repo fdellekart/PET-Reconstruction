@@ -8,7 +8,7 @@
 TEST(RayTracerTest, HorizontalTraceInLowestVoxel) {
   // Setup 10x10 image with voxel size one and origin 0
   ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
-  RayTracer tracer(geometry);
+  RayTracer tracer(geometry.img_dimensions);
   Vec2<double> start, end;
 
   start.x = 0;
@@ -17,7 +17,7 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxel) {
   end.y = 0.5;
 
   // Execute
-  std::vector<VoxelHit> result = tracer.trace(start, end);
+  std::vector<VoxelHit> result = tracer.trace(start, end, geometry);
 
   // Verify
   int idx = 1; // TODO: Zero based could make sense
@@ -39,7 +39,7 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxel) {
 TEST(RayTracerTest, HorizontalTraceInLowestVoxelReverse) {
   // Setup 10x10 image with voxel size one and origin 0
   ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
-  RayTracer tracer(geometry);
+  RayTracer tracer(geometry.img_dimensions);
   Vec2<double> start, end;
 
   start.x = 10;
@@ -48,7 +48,7 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxelReverse) {
   end.y = 0.5;
 
   // Execute
-  std::vector<VoxelHit> result = tracer.trace(start, end);
+  std::vector<VoxelHit> result = tracer.trace(start, end, geometry);
 
   // Verify
   int idx = 11; // TODO: Zero based could make sense
@@ -70,7 +70,7 @@ TEST(RayTracerTest, HorizontalTraceInLowestVoxelReverse) {
 TEST(RayTracerTest, VerticalTraceInLeftVoxel) {
   // Setup 10x10 image with voxel size one and origin 0
   ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
-  RayTracer tracer(geometry);
+  RayTracer tracer(geometry.img_dimensions);
   Vec2<double> start, end;
 
   start.x = 0.5;
@@ -79,7 +79,7 @@ TEST(RayTracerTest, VerticalTraceInLeftVoxel) {
   end.y = 5;
 
   // Execute
-  std::vector<VoxelHit> result = tracer.trace(start, end);
+  std::vector<VoxelHit> result = tracer.trace(start, end, geometry);
 
   // Verify
   int idx = 1; // TODO: Zero based could make sense
@@ -101,7 +101,7 @@ TEST(RayTracerTest, VerticalTraceInLeftVoxel) {
 TEST(RayTracerTest, VerticalTraceInRightVoxelReverse) {
   // Setup 10x10 image with voxel size one and origin 0
   ScannerGeometry geometry({10, 10}, 1, {0, 5}, 320.0, 504);
-  RayTracer tracer(geometry);
+  RayTracer tracer(geometry.img_dimensions);
   Vec2<double> start, end;
 
   start.x = 9.5;
@@ -110,7 +110,7 @@ TEST(RayTracerTest, VerticalTraceInRightVoxelReverse) {
   end.y = -5;
 
   // Execute
-  std::vector<VoxelHit> result = tracer.trace(start, end);
+  std::vector<VoxelHit> result = tracer.trace(start, end, geometry);
 
   // Verify
   int idx = 11; // TODO: Zero based could make sense

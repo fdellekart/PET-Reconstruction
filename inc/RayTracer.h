@@ -16,8 +16,8 @@ public:
   /// @param voxel_size Voxel sizes for each direction
   /// @param origin Origin of the coordinate system relative to lower left image
   /// corner
-  RayTracer(ScannerGeometry geometry) : geometry(geometry) {
-    alphas.reserve(geometry.img_dimensions.x + geometry.img_dimensions.x);
+  RayTracer(Vec2<int> img_dimensions) {
+    alphas.reserve(img_dimensions.x + img_dimensions.y);
   };
 
   /// @brief Trace the line connecting the points through the image
@@ -29,9 +29,9 @@ public:
   /// FIXME: Currently sometimes includes voxels outside the image with
   ///        a length of 0.
   /// TODO: Adapting to 0-based indexing could be good
-  std::vector<VoxelHit> trace(Vec2<double> ray_start, Vec2<double> ray_end);
+  std::vector<VoxelHit> trace(Vec2<double> ray_start, Vec2<double> ray_end,
+                              const ScannerGeometry &geometry);
 
 private:
-  ScannerGeometry geometry;
   std::vector<double> alphas;
 };

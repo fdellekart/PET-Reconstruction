@@ -4,6 +4,7 @@
 #include "PETLINKStream.h"
 #include "RayTracer.h"
 #include "Sinogram.h"
+#include "projections.h"
 #include <cassert>
 #include <chrono>
 #include <cstdint>
@@ -15,7 +16,7 @@ int main(int argc, char **argv) {
   Sinogram<252, 344> sinogram = Sinogram<252, 344>::from_file(
       "/home/florian/Documents/Programming/MMR2PETSIRD/sinogram");
   ScannerGeometry geometry = ScannerGeometry::mmr();
-  RayTracer tracer(geometry);
+  RayTracer tracer(geometry.img_dimensions);
   LOR lor;
   Image<344, 344> image;
 
@@ -25,7 +26,7 @@ int main(int argc, char **argv) {
     for (int tang_idx = 0; tang_idx < 344; tang_idx++) {
       lor = LOR(tang_idx, ang_idx, 0);
       auto det_pos = lor.get_det_positions(geometry);
-      auto trace = tracer.trace(det_pos.first, det_pos.second);
+      auto trace = tracer.trace(det_pos.first, det_pos.second, geometry);
       for (auto voxel_hit : trace) {
         image.data[voxel_hit.i - 1][voxel_hit.j - 1] +=
             (voxel_hit.length * sinogram.get_bin(ang_idx, tang_idx));
