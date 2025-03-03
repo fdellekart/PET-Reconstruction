@@ -56,8 +56,14 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   int j_max = 1 + (ray_start.y + alpha_for_max * (ray_end.y - ray_start.y)) /
                       geometry.voxel_size;
 
-  alpha_x.resize(i_max - i_min);
-  alpha_y.resize(j_max - j_min);
+  int n = (i_max - i_min + 1) + (j_max - j_min + 1);
+  alphas.resize(n);
+  alphas[0] = alpha_min;
+  alphas[n - 1] = alpha_max;
+
+  int n_x = i_max - i_min;
+  int n_y = j_max - j_min;
+
   int dir;
 
   dir = ray_start.x <= ray_end.x ? 1 : -1;
@@ -68,7 +74,7 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   for (int i = i_min; i < i_max; i++) {
     int idx = i - i_min;
     idx = dir > 0 ? idx : i_max - i_min - idx - 1;
-    alpha_x[idx] = get_alpha_x(i + 1);
+    alphas[idx + 1] = get_alpha_x(i + 1);
   }
 
   dir = ray_start.y <= ray_end.y ? 1 : -1;
@@ -76,16 +82,10 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   for (int j = j_min; j < j_max; j++) {
     int idx = j - j_min;
     idx = dir > 0 ? idx : j_max - j_min - idx - 1;
-    alpha_y[idx] = get_alpha_y(j + 1);
+    alphas[idx + n_x + 1] = get_alpha_y(j + 1);
   }
 
-  int n = (i_max - i_min + 1) + (j_max - j_min + 1);
-
-  alphas.resize(n);
-  alphas[0] = alpha_min;
-  alphas[n - 1] = alpha_max;
-  std::merge(alpha_x.begin(), alpha_x.end(), alpha_y.begin(), alpha_y.end(),
-             ++alphas.begin());
+  std::inplace_merge(alphas.begin(), alphas.begin() + n_x + 1, alphas.end());
 
   std::vector<VoxelHit> hits(n - 1);
 

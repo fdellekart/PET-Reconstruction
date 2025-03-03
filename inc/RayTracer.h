@@ -17,8 +17,6 @@ public:
   /// @param origin Origin of the coordinate system relative to lower left image
   /// corner
   RayTracer(ScannerGeometry geometry) : geometry(geometry) {
-    alpha_x.reserve(geometry.img_dimensions.x);
-    alpha_y.reserve(geometry.img_dimensions.y);
     alphas.reserve(geometry.img_dimensions.x + geometry.img_dimensions.x);
   };
 
@@ -35,7 +33,5 @@ public:
 
 private:
   ScannerGeometry geometry;
-  std::vector<double> alpha_x;
-  std::vector<double> alpha_y;
   std::vector<double> alphas;
 };
