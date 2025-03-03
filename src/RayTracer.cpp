@@ -89,14 +89,17 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
 
   std::vector<VoxelHit> hits(n - 1);
 
+  auto current = alphas[0];
+
   for (int i = 0; i < n - 1; i++) {
-    hits[i] = VoxelHit(1 + (ray_start.x + ((alphas[i + 1] + alphas[i]) / 2) *
-                                              (ray_end.x - ray_start.x)) /
-                               geometry.voxel_size,
-                       1 + (ray_start.y + ((alphas[i + 1] + alphas[i]) / 2) *
-                                              (ray_end.y - ray_start.y)) /
-                               geometry.voxel_size,
-                       alphas[i + 1] - alphas[i]);
+    auto next = alphas[i + 1];
+    hits[i] = VoxelHit(
+        1 + (ray_start.x + ((next + current) / 2) * (ray_end.x - ray_start.x)) /
+                geometry.voxel_size,
+        1 + (ray_start.y + ((next + current) / 2) * (ray_end.y - ray_start.y)) /
+                geometry.voxel_size,
+        next - current);
+    current = next;
   }
 
   return hits;
