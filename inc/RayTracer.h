@@ -1,3 +1,4 @@
+#pragma once
 #include "Geometry.h"
 #include <algorithm>
 #include <cassert>

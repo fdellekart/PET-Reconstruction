@@ -21,18 +21,7 @@ int main(int argc, char **argv) {
   Image<344, 344> image;
 
   auto t1 = std::chrono::high_resolution_clock::now();
-
-  for (int ang_idx = 0; ang_idx < 252; ang_idx++) {
-    for (int tang_idx = 0; tang_idx < 344; tang_idx++) {
-      lor = LOR(tang_idx, ang_idx, 0);
-      auto det_pos = lor.get_det_positions(geometry);
-      auto trace = tracer.trace(det_pos.first, det_pos.second, geometry);
-      for (auto voxel_hit : trace) {
-        image.data[voxel_hit.i - 1][voxel_hit.j - 1] +=
-            (voxel_hit.length * sinogram.get_bin(ang_idx, tang_idx));
-      }
-    }
-  }
+  image = project_backward(sinogram, tracer, geometry);
 
   auto t2 = std::chrono::high_resolution_clock::now();
   auto delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
