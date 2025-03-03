@@ -57,29 +57,30 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   int j_max = 1 + (ray_start.y + alpha_for_max * (ray_end.y - ray_start.y)) /
                       geometry.voxel_size;
 
-  alpha_x.resize(std::abs(i_max - i_min));
-  alpha_y.resize(std::abs(j_max - j_min));
+  alpha_x.resize(i_max - i_min);
+  alpha_y.resize(j_max - j_min);
+  int dir;
 
-  int start = i_min < i_max ? i_min : i_max;
-  int end = i_min < i_max ? i_max : i_min;
+  dir = ray_start.x <= ray_end.x ? 1 : -1;
 
-  for (int i = start; i < end; i++) {
-    alpha_x[i - start] = get_alpha_x(i + 1);
+  assert(i_min <= i_max);
+  assert(j_min <= j_max);
+
+  for (int i = i_min; i < i_max; i++) {
+    int idx = i - i_min;
+    idx = dir > 0 ? idx : i_max - i_min - idx - 1;
+    alpha_x[idx] = get_alpha_x(i + 1);
   }
 
-  start = j_min < j_max ? j_min : j_max;
-  end = j_min < j_max ? j_max : j_min;
+  dir = ray_start.y <= ray_end.y ? 1 : -1;
 
-  for (int j = start; j < end; j++) {
-    alpha_y[j - start] = get_alpha_y(j + 1);
+  for (int j = j_min; j < j_max; j++) {
+    int idx = j - j_min;
+    idx = dir > 0 ? idx : j_max - j_min - idx - 1;
+    alpha_y[idx] = get_alpha_y(j + 1);
   }
 
   int n = (i_max - i_min + 1) + (j_max - j_min + 1);
-
-  if (ray_start.x > ray_end.x)
-    std::reverse(alpha_x.begin(), alpha_x.end());
-  if (ray_start.y > ray_end.y)
-    std::reverse(alpha_y.begin(), alpha_y.end());
 
   alphas.resize(n);
   alphas[0] = alpha_min;
