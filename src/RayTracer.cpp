@@ -3,7 +3,6 @@
 std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
                                        Vec2<double> ray_end) {
   // Implementation of Siddon's algorithm
-  std::vector<VoxelHit> hits;
   auto Nx = geometry.img_dimensions.x + 1;
   auto Ny = geometry.img_dimensions.y + 1;
 
@@ -88,15 +87,16 @@ std::vector<VoxelHit> RayTracer::trace(Vec2<double> ray_start,
   std::merge(alpha_x.begin(), alpha_x.end(), alpha_y.begin(), alpha_y.end(),
              ++alphas.begin());
 
+  std::vector<VoxelHit> hits(n - 1);
+
   for (int i = 0; i < n - 1; i++) {
-    hits.push_back(
-        VoxelHit(1 + (ray_start.x + ((alphas[i + 1] + alphas[i]) / 2) *
-                                        (ray_end.x - ray_start.x)) /
-                         geometry.voxel_size,
-                 1 + (ray_start.y + ((alphas[i + 1] + alphas[i]) / 2) *
-                                        (ray_end.y - ray_start.y)) /
-                         geometry.voxel_size,
-                 alphas[i + 1] - alphas[i]));
+    hits[i] = VoxelHit(1 + (ray_start.x + ((alphas[i + 1] + alphas[i]) / 2) *
+                                              (ray_end.x - ray_start.x)) /
+                               geometry.voxel_size,
+                       1 + (ray_start.y + ((alphas[i + 1] + alphas[i]) / 2) *
+                                              (ray_end.y - ray_start.y)) /
+                               geometry.voxel_size,
+                       alphas[i + 1] - alphas[i]);
   }
 
   return hits;
