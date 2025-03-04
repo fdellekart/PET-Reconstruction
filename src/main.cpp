@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 
   auto t1 = std::chrono::high_resolution_clock::now();
   image = project_backward(sinogram, tracer, geometry);
+  sinogram = project_forward<252, 344>(image, tracer, geometry);
 
   auto t2 = std::chrono::high_resolution_clock::now();
   auto delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
@@ -34,6 +35,8 @@ int main(int argc, char **argv) {
   dur_file << delta_t << std::endl;
 
   image.to_file("/home/florian/Documents/Programming/MMR2PETSIRD/image");
+  sinogram.to_file("/home/florian/Documents/Programming/MMR2PETSIRD/"
+                   "sinogram_forward_project");
 
   return 0;
 }

@@ -63,11 +63,10 @@ public:
 
     return sinogram;
   };
+  int data[NANGLES][NTANG] = {0};
 
 private:
   Sinogram(int *data) : data(data) {};
-
-  int data[NANGLES][NTANG] = {0};
 
   /// @brief Check if indexes are in range or throw out_of_range
   void check_range(int angle_idx, int tang_idx) {
