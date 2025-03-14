@@ -4,3 +4,7 @@ src/main
 src/PETLINKStream
 inc/PETLINKStream
 data
+sinogram*
+image*
+callgrind*
+tryout.py
