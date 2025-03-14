@@ -30,23 +30,14 @@ int main(int argc, char **argv) {
     std::cout << "Iteration " << it << std::endl;
 
     forwardprojection = project_forward<252, 344>(image, tracer, geometry);
-
-    for (int i = 0; i < 252; i++) {
-      for (int j = 0; j < 344; j++) {
-        errors.data[i][j] = sinogram.data[i][j] / forwardprojection.data[i][j];
-      }
-    }
-
+    errors = sinogram / forwardprojection;
     backward_errors = project_backward(errors, tracer, geometry);
-    for (int i = 0; i < 344; i++) {
-      for (int j = 0; j < 344; j++) {
-        image.data[i][j] *= backward_errors.data[i][j];
-      }
-    }
-    snprintf(filename, sizeof(filename),
-             "/home/florian/Documents/Programming/MMR2PETSIRD/image_it%d", it);
-    image.to_file(filename);
+    image *= backward_errors;
   }
+
+  snprintf(filename, sizeof(filename),
+           "/home/florian/Documents/Programming/MMR2PETSIRD/image_it%d", 20);
+  image.to_file(filename);
 
   auto t2 = std::chrono::high_resolution_clock::now();
   auto delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);

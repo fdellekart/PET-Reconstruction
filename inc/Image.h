@@ -10,6 +10,14 @@ public:
   Image(double value) { std::fill_n(&data[0][0], X_DIM * Y_DIM, value); };
   double data[X_DIM][Y_DIM] = {0};
 
+  void operator*=(Image<X_DIM, Y_DIM> &other) {
+    for (int i = 0; i < X_DIM; i++) {
+      for (int j = 0; j < Y_DIM; j++) {
+        data[i][j] *= other.data[i][j];
+      }
+    }
+  };
+
   void to_file(const std::string &filepath) {
     std::ofstream outstream(filepath);
 

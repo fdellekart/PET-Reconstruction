@@ -11,6 +11,26 @@ template <int NANGLES, int NTANG> class Sinogram {
 public:
   Sinogram() = default;
 
+  Sinogram<NANGLES, NTANG> operator-(Sinogram<NANGLES, NTANG> &other) {
+    Sinogram<NANGLES, NTANG> result;
+    for (int i = 0; i < NANGLES; i++) {
+      for (int j = 0; j < NTANG; j++) {
+        result.data[i][j] = data[i][j] - other.data[i][j];
+      }
+    }
+    return result;
+  }
+
+  Sinogram<NANGLES, NTANG> operator/(Sinogram<NANGLES, NTANG> &other) {
+    Sinogram<NANGLES, NTANG> result;
+    for (int i = 0; i < NANGLES; i++) {
+      for (int j = 0; j < NTANG; j++) {
+        result.data[i][j] = data[i][j] / other.data[i][j];
+      }
+    }
+    return result;
+  }
+
   /// @brief Increment the specified bin by one
   void add_event(int angle_idx, int tang_idx) {
     check_range(angle_idx, tang_idx);
