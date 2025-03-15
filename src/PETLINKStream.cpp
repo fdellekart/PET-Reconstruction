@@ -28,15 +28,13 @@ EventOrTag PETLINKStream::get_next() {
   return result;
 };
 
-bool PETLINKStream::seek_time(int32_t time) {
-  uint32_t next_time = this->get_next_time();
+bool PETLINKStream::seek_time(std::chrono::milliseconds time) {
+  std::chrono::milliseconds next_time = this->get_next_time();
   std::streampos smaller_position = this->tellg();
 
   this->seekg(0, ios_base::end);
   std::streampos bigger_position = this->tellg();
   std::streampos middle_position;
-  std::shared_ptr<EventOrTag> smaller_time;
-  std::shared_ptr<EventOrTag> bigger_time;
 
   bool success = false;
 
@@ -56,19 +54,20 @@ bool PETLINKStream::seek_time(int32_t time) {
   return success;
 };
 
-uint32_t PETLINKStream::get_next_time() {
-  uint32_t time = 0;
-  while (!time && !this->eof()) {
-    auto next = this->get_next();
+std::chrono::milliseconds PETLINKStream::get_next_time() {
+  EventOrTag next;
+  bool found = false;
+  while (!found && !this->eof()) {
+    next = this->get_next();
     if (!next.is_event && next.tag.is_timetag)
-      time = next.tag.elapsed_millis;
-    if (this->eof()) {
+      found = true;
+    if (this->eof()) { // TODO: Is this even reachable?
       throw std::runtime_error("Encountered EOF in PETLINK binary search. This "
                                "shouldn't be possible");
     };
   }
   this->seekg(this->tellg() - sizeof(int32_t));
-  return time;
+  return next.tag.time;
 };
 
 Event::Event(uint32_t word) : word(word) {
@@ -94,5 +93,5 @@ LOR Event::get_lor() {
 Tag::Tag(uint32_t word) : word(word) {
   assert((word >> 31));
   is_timetag = (word >> 29) == 0x4;
-  elapsed_millis = word & 0x01ffffff;
+  time = std::chrono::milliseconds(word & 0x01ffffff);
 };

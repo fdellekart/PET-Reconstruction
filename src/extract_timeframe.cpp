@@ -1,5 +1,6 @@
 #include "PETLINKStream.h"
 #include <cassert>
+#include <chrono>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -10,8 +11,8 @@ int main(int argc, char **argv) {
                              "for <inpath> <starttime> <endtime> <outpath>");
   }
   PETLINKStream stream(argv[1]);
-  int time_start = atoi(argv[2]);
-  int time_end = atoi(argv[3]);
+  auto time_start = std::chrono::milliseconds(atoi(argv[2]));
+  auto time_end = std::chrono::milliseconds(atoi(argv[3]));
   std::ofstream dest_file;
   dest_file.open(argv[4], std::fstream::binary);
   if (!stream.good()) {
@@ -25,7 +26,7 @@ int main(int argc, char **argv) {
   auto next_element = stream.get_next();
   assert(!next_element.is_event);
   assert(next_element.tag.is_timetag);
-  int time = next_element.tag.elapsed_millis;
+  std::chrono::milliseconds time = next_element.tag.time;
   int i = 0;
 
   int32_t word;
@@ -35,8 +36,8 @@ int main(int argc, char **argv) {
     } else {
       word = next_element.tag.word;
       if (next_element.tag.is_timetag) {
-        time = next_element.tag.elapsed_millis;
-        if (time % 100 == 0) {
+        time = next_element.tag.time;
+        if (time.count() % 100 == 0) {
           std::cout << "Processed " << time << " ms" << std::endl;
         }
       }

@@ -1,4 +1,5 @@
 #include "PETLINKStream.h"
+#include <chrono>
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -46,7 +47,7 @@ TEST_F(PETLINKStreamTest, TestGetNext) {
   element = stream.get_next();
   ASSERT_FALSE(element.is_event);
   EXPECT_TRUE(element.tag.is_timetag);
-  EXPECT_EQ(element.tag.elapsed_millis, 1);
+  EXPECT_EQ(element.tag.time.count(), 1);
 
   element = stream.get_next();
   ASSERT_TRUE(element.is_event);
@@ -63,17 +64,17 @@ TEST_F(PETLINKStreamTest, TestGetNext) {
 
 // Test if seek_time moves the stream to the proper timepoint
 TEST_F(PETLINKStreamTest, TestSeekTime) {
-  stream.seek_time(50);
+  stream.seek_time(std::chrono::milliseconds(50));
   auto element = stream.get_next();
   EXPECT_FALSE(element.is_event);
   EXPECT_TRUE(element.tag.is_timetag);
-  EXPECT_EQ(element.tag.elapsed_millis, 50);
+  EXPECT_EQ(element.tag.time.count(), 50);
 
-  stream.seek_time(73);
+  stream.seek_time(std::chrono::milliseconds(73));
   element = stream.get_next();
   EXPECT_FALSE(element.is_event);
   EXPECT_TRUE(element.tag.is_timetag);
-  EXPECT_EQ(element.tag.elapsed_millis, 73);
+  EXPECT_EQ(element.tag.time.count(), 73);
 }
 
 // Test if the iterator works properly

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Geometry.h"
+#include <chrono>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
@@ -29,13 +30,15 @@ public:
 
 /// @brief Tags store different metadata within the stream
 /// For example timetags store the elapsed time
+/// TODO: Should the constructor of this really be aware
+/// of the binary format from PETLINK? -> Unnecessary Coupling
 class Tag {
 public:
   Tag() : Tag(0xffffffff) {};
   Tag(uint32_t word);
   uint32_t word;
   bool is_timetag;
-  uint32_t elapsed_millis;
+  std::chrono::milliseconds time;
 };
 
 /// @brief Wrapper to return either event or tag
@@ -112,9 +115,9 @@ public:
   /// Stream will be positioned such that the returned element on the get_next
   /// call Is the requested timetag
   ///
-  /// CAUTION: FIXME: Currently wouldn't work with a file that has a timetag for
-  /// 0 ms or if the inidividual timetags are not exactly 1 ms apart.
-  bool seek_time(int32_t time);
+  /// CAUTION: FIXME: Currently wouldn't work with a file
+  /// if the inidividual timetags are not exactly 1 ms apart.
+  bool seek_time(std::chrono::milliseconds time);
 
 protected:
   const char *listmode_file;
@@ -126,5 +129,5 @@ private:
   /// @return Time since start in milliseconds
   ///
   /// Resets the stream so that the next get_next call returns that timetag
-  uint32_t get_next_time();
+  std::chrono::milliseconds get_next_time();
 };
