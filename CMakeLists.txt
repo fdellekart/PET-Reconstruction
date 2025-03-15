@@ -40,6 +40,3 @@ target_link_libraries(${PROJECT_NAME} tbb)
 target_compile_definitions(${PROJECT_NAME} PRIVATE PARALLEL)
 target_compile_definitions(${PROJECT_NAME} PRIVATE _GLIBCXX_PARALLEL)
 target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp)
-
-add_executable(extract_timeframe src/extract_timeframe.cpp src/PETLINKStream.cpp)
-target_include_directories(extract_timeframe PRIVATE inc)
