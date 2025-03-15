@@ -61,11 +61,12 @@ std::chrono::milliseconds PETLINKStream::get_next_time() {
     next = this->get_next();
     if (!next.is_event && next.tag.is_timetag)
       found = true;
-    if (this->eof()) { // TODO: Is this even reachable?
-      throw std::runtime_error("Encountered EOF in PETLINK binary search. This "
-                               "shouldn't be possible");
-    };
   }
+
+  if (this->eof()) {
+    throw std::runtime_error("EOF reached when searching for next time tag.");
+  };
+
   this->seekg(this->tellg() - sizeof(int32_t));
   return next.tag.time;
 };
