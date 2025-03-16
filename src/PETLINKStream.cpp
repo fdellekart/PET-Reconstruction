@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <variant>
 
 PETLINKStream::PETLINKStream(const char *listmode_file)
     : listmode_file(listmode_file) {
@@ -15,17 +16,14 @@ PETLINKStream::PETLINKStream(const char *listmode_file)
 
 PETLINKStream::~PETLINKStream() { close(); };
 
-EventOrTag PETLINKStream::get_next() {
+std::variant<Tag, Event> PETLINKStream::get_next() {
   read(reinterpret_cast<char *>(&current_word), sizeof(current_word));
-  EventOrTag result;
+
   if (current_word >> 31) {
-    result.is_event = false;
-    result.tag = Tag(current_word);
+    return Tag(current_word);
   } else {
-    result.is_event = true;
-    result.event = Event(current_word);
+    return Event(current_word);
   }
-  return result;
 };
 
 bool PETLINKStream::seek_time(std::chrono::milliseconds time) {
@@ -55,11 +53,11 @@ bool PETLINKStream::seek_time(std::chrono::milliseconds time) {
 };
 
 std::chrono::milliseconds PETLINKStream::get_next_time() {
-  EventOrTag next;
+  std::variant<Tag, Event> next;
   bool found = false;
   while (!found && !this->eof()) {
     next = this->get_next();
-    if (!next.is_event && next.tag.is_timetag)
+    if (std::holds_alternative<Tag>(next) && std::get<Tag>(next).is_timetag)
       found = true;
   }
 
@@ -68,7 +66,7 @@ std::chrono::milliseconds PETLINKStream::get_next_time() {
   };
 
   this->seekg(this->tellg() - sizeof(int32_t));
-  return next.tag.time;
+  return std::get<Tag>(next).time;
 };
 
 Event::Event(uint32_t word) : word(word) {

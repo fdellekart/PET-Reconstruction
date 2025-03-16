@@ -5,6 +5,7 @@
 #include "PETLINKStream.h"
 #include "Sinogram.h"
 #include <chrono>
+#include <variant>
 
 #define ms_cast std::chrono::duration_cast<std::chrono::milliseconds>
 
@@ -24,18 +25,21 @@ EmissionData<NANGLES, NTANG> histogram(PETLINKStream &stream,
   stream.seek_time(start_time);
   LOR lor;
 
-  for (EventOrTag next : stream) {
-    if (next.is_event) {
-      lor = next.event.get_lor();
+  for (auto next : stream) {
+    if (std::holds_alternative<Event>(next)) {
+      auto event = std::get<Event>(next);
+      lor = event.get_lor();
       if (lor.proj_idx != 30)
         continue;
-      if (next.event.is_prompt) {
+      if (event.is_prompt) {
         result.prompts.add_event(lor.angle_idx, lor.tang_idx);
       } else {
         result.delayeds.add_event(lor.angle_idx, lor.tang_idx);
       }
-    } else if (next.tag.is_timetag & (next.tag.time > end_time)) {
-      break;
+    } else {
+      auto tag = std::get<Tag>(next);
+      if (tag.is_timetag & (tag.time > end_time))
+        break;
     }
   }
 

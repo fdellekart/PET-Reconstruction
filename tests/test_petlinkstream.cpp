@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <variant>
 
 class PETLINKStreamTest : public testing::Test {
 protected:
@@ -42,39 +43,39 @@ private:
 TEST_F(PETLINKStreamTest, TestGetNext) {
   ASSERT_TRUE(stream.good());
 
-  EventOrTag element;
+  std::variant<Tag, Event> element;
 
   element = stream.get_next();
-  ASSERT_FALSE(element.is_event);
-  EXPECT_TRUE(element.tag.is_timetag);
-  EXPECT_EQ(element.tag.time.count(), 1);
+  ASSERT_TRUE(std::holds_alternative<Tag>(element));
+  EXPECT_TRUE(std::get<Tag>(element).is_timetag);
+  EXPECT_EQ(std::get<Tag>(element).time.count(), 1);
 
   element = stream.get_next();
-  ASSERT_TRUE(element.is_event);
-  EXPECT_TRUE(element.event.is_prompt);
-  EXPECT_FALSE(element.event.is_delayed);
-  EXPECT_EQ(element.event.bin_address, 1);
+  ASSERT_TRUE(std::holds_alternative<Event>(element));
+  EXPECT_TRUE(std::get<Event>(element).is_prompt);
+  EXPECT_FALSE(std::get<Event>(element).is_delayed);
+  EXPECT_EQ(std::get<Event>(element).bin_address, 1);
 
   element = stream.get_next();
-  ASSERT_TRUE(element.is_event);
-  EXPECT_TRUE(element.event.is_delayed);
-  EXPECT_FALSE(element.event.is_prompt);
-  EXPECT_EQ(element.event.bin_address, 1);
+  ASSERT_TRUE(std::holds_alternative<Event>(element));
+  EXPECT_TRUE(std::get<Event>(element).is_delayed);
+  EXPECT_FALSE(std::get<Event>(element).is_prompt);
+  EXPECT_EQ(std::get<Event>(element).bin_address, 1);
 }
 
 // Test if seek_time moves the stream to the proper timepoint
 TEST_F(PETLINKStreamTest, TestSeekTime) {
   stream.seek_time(std::chrono::milliseconds(50));
   auto element = stream.get_next();
-  EXPECT_FALSE(element.is_event);
-  EXPECT_TRUE(element.tag.is_timetag);
-  EXPECT_EQ(element.tag.time.count(), 50);
+  EXPECT_TRUE(std::holds_alternative<Tag>(element));
+  EXPECT_TRUE(std::get<Tag>(element).is_timetag);
+  EXPECT_EQ(std::get<Tag>(element).time.count(), 50);
 
   stream.seek_time(std::chrono::milliseconds(73));
   element = stream.get_next();
-  EXPECT_FALSE(element.is_event);
-  EXPECT_TRUE(element.tag.is_timetag);
-  EXPECT_EQ(element.tag.time.count(), 73);
+  EXPECT_TRUE(std::holds_alternative<Tag>(element));
+  EXPECT_TRUE(std::get<Tag>(element).is_timetag);
+  EXPECT_EQ(std::get<Tag>(element).time.count(), 73);
 }
 
 // Test if the iterator works properly
@@ -84,12 +85,12 @@ TEST_F(PETLINKStreamTest, TestSeekTime) {
 // This could fail unintended if two identical events
 // are put after each other in the stream fixture
 TEST_F(PETLINKStreamTest, TestIterator) {
-  EventOrTag last;
+  std::variant<Tag, Event> last;
   bool is_first_iter = true;
 
-  for (EventOrTag element : stream) {
+  for (std::variant<Tag, Event> element : stream) {
     if (!is_first_iter) {
-      ASSERT_NE(last.event.word, element.event.word);
+      ASSERT_NE(std::get<Event>(last).word, std::get<Event>(element).word);
     }
     last = element;
     is_first_iter = false;

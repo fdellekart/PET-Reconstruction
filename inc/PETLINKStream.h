@@ -41,17 +41,6 @@ public:
   std::chrono::milliseconds time;
 };
 
-/// @brief Wrapper to return either event or tag
-/// Can have either tag or event set but not both
-struct EventOrTag {
-  bool is_event;
-  Event event;
-  Tag tag;
-
-public:
-  EventOrTag() = default;
-};
-
 /// @brief Input filestream to read listmode files in 32 bit PETLINK format
 class PETLINKStream : public std::ifstream {
 public:
@@ -63,7 +52,7 @@ public:
 
   struct iterator {
     PETLINKStream *stream;
-    EventOrTag current_element;
+    std::variant<Tag, Event> current_element;
 
   public:
     iterator(PETLINKStream *s = nullptr, bool is_end = false) : stream(s) {
@@ -75,7 +64,7 @@ public:
         stream = nullptr;
       }
     }
-    EventOrTag operator*() const { return current_element; };
+    std::variant<Tag, Event> operator*() const { return current_element; };
     iterator &operator++() {
       if (stream) {
         current_element = stream->get_next();
@@ -103,7 +92,7 @@ public:
 
   /// @brief Get the next element in the stream
   /// @return Tag or event, depending on what the next 32 bits represent
-  EventOrTag get_next();
+  std::variant<Tag, Event> get_next();
 
   /// @brief Set the current position of the stream to a specific point in time
   /// @param time milliseconds since start
