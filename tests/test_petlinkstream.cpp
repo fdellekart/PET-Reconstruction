@@ -65,8 +65,14 @@ TEST_F(PETLINKStreamTest, TestGetNext) {
 
 // Test if seek_time moves the stream to the proper timepoint
 TEST_F(PETLINKStreamTest, TestSeekTime) {
-  stream.seek_time(std::chrono::milliseconds(50));
+  stream.seek_time(std::chrono::milliseconds(1));
   auto element = stream.get_next();
+  EXPECT_TRUE(std::holds_alternative<Tag>(element));
+  EXPECT_TRUE(std::get<Tag>(element).is_timetag);
+  EXPECT_EQ(std::get<Tag>(element).time.count(), 1);
+
+  stream.seek_time(std::chrono::milliseconds(50));
+  element = stream.get_next();
   EXPECT_TRUE(std::holds_alternative<Tag>(element));
   EXPECT_TRUE(std::get<Tag>(element).is_timetag);
   EXPECT_EQ(std::get<Tag>(element).time.count(), 50);
@@ -89,6 +95,8 @@ TEST_F(PETLINKStreamTest, TestIterator) {
   bool is_first_iter = true;
 
   for (std::variant<Tag, Event> element : stream) {
+    if (std::holds_alternative<Tag>(element))
+      continue;
     if (!is_first_iter) {
       ASSERT_NE(std::get<Event>(last).word, std::get<Event>(element).word);
     }

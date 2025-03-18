@@ -27,7 +27,13 @@ std::variant<Tag, Event> PETLINKStream::get_next() {
 };
 
 bool PETLINKStream::seek_time(std::chrono::milliseconds time) {
+  this->seekg(0);
   std::chrono::milliseconds next_time = this->get_next_time();
+
+  assert(time >= next_time);
+
+  if (next_time == time)
+    return true;
   std::streampos smaller_position = this->tellg();
 
   this->seekg(0, ios_base::end);
