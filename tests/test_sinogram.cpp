@@ -5,7 +5,7 @@
 
 TEST(SinogramTest, TestSinogram) {
   // Setup
-  Sinogram<10, 10> sinogram;
+  Sinogram sinogram(10, 10);
 
   // Execute
   sinogram.add_event(1, 1);

@@ -22,8 +22,15 @@ struct ScannerGeometry {
   /// Detectors per ring
   int det_per_ring;
 
+  /// Angular resolution
+  int n_angular_positions;
+
+  /// Tangential resolution
+  int n_tangential_positions;
+
   static ScannerGeometry mmr() {
-    return ScannerGeometry({344, 344}, 656.0 / 344, {0, 328}, 656.0, 504);
+    return ScannerGeometry({344, 344}, 656.0 / 344, {0, 328}, 656.0, 504, 252,
+                           344);
   }
 };
 
