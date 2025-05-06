@@ -1,14 +1,11 @@
 #pragma once
 #include "Geometry.h"
+#include "Utils.h"
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-int get_data_index_from_pos(int ang_idx, int tang_idx, int n_ang) {
-  return ang_idx * n_ang + tang_idx;
-}
 
 /// @brief Representation of one projection
 class Sinogram {

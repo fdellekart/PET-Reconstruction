@@ -26,6 +26,6 @@ int main(int argc, char **argv) {
     }
   }
   RayTracer tracer({344, 344});
-  auto image = project_backward<344, 344>(result.prompts, tracer, geometry);
+  auto image = project_backward(result.prompts, tracer, geometry);
   image.to_file("/home/florian/Documents/Programming/MMR2PETSIRD/image");
 }

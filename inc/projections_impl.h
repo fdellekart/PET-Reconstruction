@@ -3,19 +3,22 @@
 #include "RayTracer.h"
 #include "Sinogram.h"
 
-template <int N_ANG, int N_TANG>
-Image<N_TANG, N_TANG> project_backward(Sinogram &sinogram, RayTracer &tracer,
-                                       ScannerGeometry &geometry) {
-  Image<N_TANG, N_TANG> image;
+Image project_backward(Sinogram &sinogram, RayTracer &tracer,
+                       ScannerGeometry &geometry) {
+  Image image(sinogram.n_tangential_positions, sinogram.n_tangential_positions,
+              0);
   LOR lor;
 
-  for (int ang_idx = 0; ang_idx < N_ANG; ang_idx++) {
-    for (int tang_idx = 0; tang_idx < N_TANG; tang_idx++) {
+  for (int ang_idx = 0; ang_idx < sinogram.n_tangential_positions; ang_idx++) {
+    for (int tang_idx = 0; tang_idx < sinogram.n_tangential_positions;
+         tang_idx++) {
       lor = LOR(tang_idx, ang_idx, 0);
       auto det_pos = lor.get_det_positions(geometry);
       auto trace = tracer.trace(det_pos.first, det_pos.second, geometry);
       for (auto voxel_hit : trace) {
-        image.data[voxel_hit.i - 1][voxel_hit.j - 1] +=
+        int index = get_data_index_from_pos(voxel_hit.i - 1, voxel_hit.j - 1,
+                                            image.x_dim);
+        image.data[index] +=
             (voxel_hit.length * sinogram.get_bin(ang_idx, tang_idx));
       }
     }
@@ -24,23 +27,23 @@ Image<N_TANG, N_TANG> project_backward(Sinogram &sinogram, RayTracer &tracer,
   return image;
 };
 
-template <int N_ANG, int N_TANG>
-Sinogram project_forward(Image<N_TANG, N_TANG> &image, RayTracer &tracer,
+Sinogram project_forward(Image &image, RayTracer &tracer,
                          ScannerGeometry *geometry) {
   Sinogram sinogram(geometry);
   LOR lor;
-  for (int ang_idx = 0; ang_idx < geometry->n_angular_positions; ang_idx++) {
-    for (int tang_idx = 0; tang_idx < geometry->n_tangential_positions;
+  for (int ang_idx = 0; ang_idx < sinogram.n_angular_positions; ang_idx++) {
+    for (int tang_idx = 0; tang_idx < sinogram.n_tangential_positions;
          tang_idx++) {
       lor = LOR(tang_idx, ang_idx, 0);
       auto det_pos = lor.get_det_positions(*geometry);
       auto trace = tracer.trace(det_pos.first, det_pos.second, *geometry);
       double result = 0;
       for (auto hit : trace) {
-        result += image.data[hit.i - 1][hit.j - 1] * hit.length;
+        int index = get_data_index_from_pos(hit.i - 1, hit.j - 1, image.x_dim);
+        result += image.data[index] * hit.length;
       }
-      sinogram.data[get_data_index_from_pos(ang_idx, tang_idx, geometry)] =
-          result;
+      sinogram.data[get_data_index_from_pos(
+          ang_idx, tang_idx, sinogram.n_angular_positions)] = result;
     }
   }
   return sinogram;

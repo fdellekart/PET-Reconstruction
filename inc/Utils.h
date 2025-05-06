@@ -1,3 +1,5 @@
+#pragma once
+
 static int assignment_index = 0;
 
 /// @brief Reassign element to VALUE only if the global, 'assignment_index'
@@ -20,4 +22,8 @@ template <int VALUE> void assign_if_index_even(int32_t &element) {
   if (assignment_index % 2 == 0)
     element = VALUE;
   assignment_index++;
+};
+
+inline int get_data_index_from_pos(int i, int j, int n_i) {
+  return i * n_i + j;
 };

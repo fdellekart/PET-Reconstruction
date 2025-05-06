@@ -1,19 +1,38 @@
 #pragma once
+#include "Utils.h"
 #include <algorithm>
+#include <cassert>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <vector>
 
-template <int X_DIM, int Y_DIM> class Image {
+class Image {
 public:
   Image() = default;
-  Image(double value) { std::fill_n(&data[0][0], X_DIM * Y_DIM, value); };
-  double data[X_DIM][Y_DIM] = {0};
+  Image(int x_dim, int y_dim, double default_value = 0)
+      : x_dim(x_dim), y_dim(y_dim) {
+    data.resize(x_dim * y_dim);
+    std::fill_n(data.begin(), x_dim * y_dim, default_value);
+  };
 
-  void operator*=(Image<X_DIM, Y_DIM> &other) {
-    for (int i = 0; i < X_DIM; i++) {
-      for (int j = 0; j < Y_DIM; j++) {
-        data[i][j] *= other.data[i][j];
+  /// @brief Number of voxels in x direction
+  int x_dim;
+
+  /// @brief Number of voxels in y direction
+  int y_dim;
+  std::vector<double> data = {0};
+
+  bool assert_dim_equal(Image &other) {
+    assert(this->x_dim == other.x_dim);
+    assert(this->y_dim == other.y_dim);
+  };
+
+  void operator*=(Image &other) {
+    assert_dim_equal(other);
+    for (int i = 0; i < x_dim; i++) {
+      for (int j = 0; j < y_dim; j++) {
+        data[get_index(i, j)] *= other.data[get_index(i, j)];
       }
     }
   };
@@ -25,10 +44,11 @@ public:
       throw std::runtime_error("Could not open file");
     };
 
-    for (int i = 0; i < X_DIM; i++) {
-      for (int j = 0; j < Y_DIM; j++) {
-        outstream << std::fixed << std::setprecision(10) << data[i][j];
-        if (j != Y_DIM - 1) {
+    for (int i = 0; i < x_dim; i++) {
+      for (int j = 0; j < y_dim; j++) {
+        outstream << std::fixed << std::setprecision(10)
+                  << data[get_index(i, j)];
+        if (j != y_dim - 1) {
           outstream << ",";
         }
       }
@@ -37,4 +57,7 @@ public:
 
     outstream.close();
   };
+
+private:
+  int get_index(int x, int y) { return get_data_index_from_pos(x, y, x_dim); };
 };
