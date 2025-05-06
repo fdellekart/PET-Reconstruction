@@ -1,5 +1,7 @@
 # PET Reconstruction
 
+![Tests](https://github.com/fdellekart/PET-Reconstruction/actions/workflows/c-cpp.yml/badge.svg)
+
 Side project of mine to play around with the reconstruction of 
 Positron Emission Tomography (PET) images and get some hands-on
 experience in C++.
