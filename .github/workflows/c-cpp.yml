@@ -7,11 +7,21 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: cmake build
+
+    - name: Install TBB
+      run: sudo apt install -y libtbb-dev
+    
+    - name: Run cmake
       run: cmake -S . -B ./build
+    
+    - name: Run make
+      run: cd build && make
+    
+    - name: Run tests
+      run: cd build && make test
