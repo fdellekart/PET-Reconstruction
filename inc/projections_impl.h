@@ -3,10 +3,10 @@
 #include "RayTracer.h"
 #include "Sinogram.h"
 
-Image project_backward(Sinogram &sinogram, RayTracer &tracer,
-                       ScannerGeometry &geometry) {
-  Image image(sinogram.n_tangential_positions, sinogram.n_tangential_positions,
-              0);
+Image<double> project_backward(Sinogram<int> &sinogram, RayTracer &tracer,
+                               ScannerGeometry &geometry) {
+  Image<double> image(sinogram.n_tangential_positions,
+                      sinogram.n_tangential_positions, 0);
   LOR lor;
 
   for (int ang_idx = 0; ang_idx < sinogram.n_tangential_positions; ang_idx++) {
@@ -27,9 +27,10 @@ Image project_backward(Sinogram &sinogram, RayTracer &tracer,
   return image;
 };
 
-Sinogram project_forward(Image &image, RayTracer &tracer,
-                         ScannerGeometry *geometry) {
-  Sinogram sinogram(geometry);
+// TODO: Can this be an integer although the calculation will hold floats
+Sinogram<double> project_forward(Image<int> &image, RayTracer &tracer,
+                                 ScannerGeometry *geometry) {
+  Sinogram<double> sinogram(geometry);
   LOR lor;
   for (int ang_idx = 0; ang_idx < sinogram.n_angular_positions; ang_idx++) {
     for (int tang_idx = 0; tang_idx < sinogram.n_tangential_positions;

@@ -9,17 +9,18 @@
 
 #define ms_cast std::chrono::duration_cast<std::chrono::milliseconds>
 
-EmissionData histogram(PETLINKStream &stream, std::chrono::seconds start_time,
-                       std::chrono::seconds end_time,
-                       ScannerGeometry *geometry) {
+EmissionData<int> histogram(PETLINKStream &stream,
+                            std::chrono::seconds start_time,
+                            std::chrono::seconds end_time,
+                            ScannerGeometry *geometry) {
   return histogram(stream, ms_cast(start_time), ms_cast(end_time), geometry);
 }
 
-EmissionData histogram(PETLINKStream &stream,
-                       std::chrono::milliseconds start_time,
-                       std::chrono::milliseconds end_time,
-                       ScannerGeometry *geometry) {
-  EmissionData result(geometry);
+EmissionData<int> histogram(PETLINKStream &stream,
+                            std::chrono::milliseconds start_time,
+                            std::chrono::milliseconds end_time,
+                            ScannerGeometry *geometry) {
+  EmissionData<int> result(geometry);
   stream.seek_time(start_time);
   LOR lor;
 

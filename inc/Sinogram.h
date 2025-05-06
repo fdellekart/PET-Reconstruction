@@ -8,7 +8,7 @@
 #include <vector>
 
 /// @brief Representation of one projection
-class Sinogram {
+template <typename T> class Sinogram {
 public:
   Sinogram() = default;
   Sinogram(int n_angular_positions, int n_tangential_positions)
@@ -20,7 +20,7 @@ public:
       : Sinogram(geometry->n_angular_positions,
                  geometry->n_tangential_positions) {};
 
-  Sinogram operator-(Sinogram &other) {
+  Sinogram operator-(Sinogram<T> &other) {
     Sinogram result;
     for (int i = 0; i < n_angular_positions; i++) {
       for (int j = 0; j < n_tangential_positions; j++) {
@@ -31,8 +31,8 @@ public:
     return result;
   }
 
-  Sinogram operator/(Sinogram &other) {
-    Sinogram result;
+  Sinogram<T> operator/(Sinogram<T> &other) {
+    Sinogram<T> result;
     for (int i = 0; i < n_angular_positions; i++) {
       for (int j = 0; j < n_tangential_positions; j++) {
         int index = get_index(i, j);
@@ -49,7 +49,7 @@ public:
   };
 
   /// @brief Get the number of events for a bin
-  int get_bin(int angle_idx, int tang_idx) {
+  T get_bin(int angle_idx, int tang_idx) {
     check_range(angle_idx, tang_idx);
     return data[get_index(angle_idx, tang_idx)];
   };
@@ -77,9 +77,9 @@ public:
     outstream.close();
   };
 
-  static Sinogram from_file(const std::string &filepath,
-                            const ScannerGeometry *geometry) {
-    Sinogram sinogram(geometry);
+  static Sinogram<int> from_file(const std::string &filepath,
+                                 const ScannerGeometry *geometry) {
+    Sinogram<int> sinogram(geometry);
     std::ifstream file(filepath);
     std::string line;
     std::string cell;
@@ -98,7 +98,7 @@ public:
     return sinogram;
   };
 
-  std::vector<double> data = {0};
+  std::vector<T> data = {0};
   int n_angular_positions;
   int n_tangential_positions;
 

@@ -7,10 +7,10 @@
 #include <iostream>
 #include <vector>
 
-class Image {
+template <typename T> class Image {
 public:
   Image() = default;
-  Image(int x_dim, int y_dim, double default_value = 0)
+  Image(int x_dim, int y_dim, T default_value = 0)
       : x_dim(x_dim), y_dim(y_dim) {
     data.resize(x_dim * y_dim);
     std::fill_n(data.begin(), x_dim * y_dim, default_value);
@@ -21,7 +21,7 @@ public:
 
   /// @brief Number of voxels in y direction
   int y_dim;
-  std::vector<double> data = {0};
+  std::vector<T> data = {0};
 
   bool assert_dim_equal(Image &other) {
     assert(this->x_dim == other.x_dim);

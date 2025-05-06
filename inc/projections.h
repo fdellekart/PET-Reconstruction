@@ -4,8 +4,8 @@
 #include "Sinogram.h"
 #include "projections_impl.h"
 
-Image project_backward(Sinogram &sinogram, RayTracer &tracer,
-                       ScannerGeometry &geometry);
+Image<double> project_backward(Sinogram<int> &sinogram, RayTracer &tracer,
+                               ScannerGeometry &geometry);
 
-Sinogram project_forward(Image &image, RayTracer &tracer,
-                         ScannerGeometry &geometry);
+Sinogram<double> project_forward(Image<double> &image, RayTracer &tracer,
+                                 ScannerGeometry &geometry);
